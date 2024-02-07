@@ -6,19 +6,22 @@ using VRC.Udon;
 public class PlayerStats : UdonSharpBehaviour
 {
 	//Global Variables
-	private float HUNGER_TICK = 0.001f; //This is the amount of hunger that is removed every tick. This should be adjusted to fit the game's pace.
-	private float THIRST_TICK = 0.001f; //This is the amount of thirst that is removed every tick. This should be adjusted to fit the game's pace.
-	
+	private readonly float HUNGER_TICK = 0.001f; //This is the amount of hunger that is removed every tick. This should be adjusted to fit the game's pace.
+	private readonly float THIRST_TICK = 0.001f; //This is the amount of thirst that is removed every tick. This should be adjusted to fit the game's pace.
+	private readonly int SKILL_MAX = 10; //The maximum skill level a player can have.
+
 	//Player Properties
-	public int PlayerHealth { get; private set; }
-	public double PlayerMoney { get; private set; }
-	public float PlayerHunger { get; private set; }
-	public float PlayerThirst { get; private set; }
-	public string JobTitle { get; private set; } //This will be used to display the player's job.
+	public int PlayerHealth { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player respawns at the hospital and loses some money.
+	public double PlayerMoney { get; private set; } = 0;
+	public float PlayerHunger { get; private set; } = 100;
+	public float PlayerThirst { get; private set; } = 100;
+	public string JobTitle { get; private set; } = "Unemployed";
+	public int[] PlayerSkills { get; private set; } //Skills start at 0 and can be increased by doing activities.
+	public int PlayerReputation { get; private set; } = 0; //It will be used to determine the player's standing in the community. Ranges from -20 to 20.
 
 	void Start()
 	{
-
+		PlayerSkills = new int[5]; //The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
 	}
 
 	//Methods
@@ -37,7 +40,7 @@ public class PlayerStats : UdonSharpBehaviour
 	/// <param name="amount">The amount of money to remove.</param>
 	public void RemoveMoney(double amount)
 	{
-		if(PlayerMoney >= amount)
+		if (PlayerMoney >= amount)
 		{
 			PlayerMoney -= amount;
 		}
@@ -77,5 +80,138 @@ public class PlayerStats : UdonSharpBehaviour
 	{
 		PlayerHunger -= HUNGER_TICK;
 		PlayerThirst -= THIRST_TICK;
+	}
+
+	/// <summary>
+	/// Adjusts the player's intelligence skill by 1 point.
+	/// </summary>
+	public void IncreaseIntelligence()
+	{
+		if (PlayerSkills[0] != SKILL_MAX)
+		{
+			PlayerSkills[0]++;
+		}
+
+	}
+
+	/// <summary>
+	/// Adjusts the player's intelligence skill by 1 point. Should only be used during skill loss events.
+	/// </summary>
+	public void DecreaseIntelligence()
+	{
+		if (PlayerSkills[0] != 0)
+		{
+			PlayerSkills[0]--;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's fitness skill by 1 point.
+	/// </summary>
+	public void IncreaseFitness()
+	{
+		if (PlayerSkills[1] != SKILL_MAX)
+		{
+			PlayerSkills[1]++;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's fitness skill by 1 point. Should only be used during skill loss events.
+	/// </summary>
+	public void DecreaseFitness()
+	{
+		if (PlayerSkills[1] != 0)
+		{
+			PlayerSkills[1]--;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's cooking skill by 1 point.
+	/// </summary>
+	public void IncreaseCooking()
+	{
+		if (PlayerSkills[2] != SKILL_MAX)
+		{
+			PlayerSkills[2]++;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's cooking skill by 1 point. Should only be used during skill loss events.
+	/// </summary>
+	public void DecreaseCooking()
+	{
+		if (PlayerSkills[2] != 0)
+		{
+			PlayerSkills[2]--;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's creativity skill by 1 point.
+	/// </summary>
+	public void IncreaseCreativity()
+	{
+		if (PlayerSkills[3] != SKILL_MAX)
+		{
+			PlayerSkills[3]++;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's creativity skill by 1 point. Should only be used during skill loss events.
+	/// </summary>
+	public void DecreaseCreativity()
+	{
+		if (PlayerSkills[3] != 0)
+		{
+			PlayerSkills[3]--;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's charisma skill by 1 point.
+	/// </summary>
+	public void IncreaseCharisma()
+	{
+		if (PlayerSkills[4] != SKILL_MAX)
+		{
+			PlayerSkills[4]++;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's charisma skill by 1 point. Should only be used during skill loss events.
+	/// </summary>
+	public void DecreaseCharisma()
+	{
+		if (PlayerSkills[4] != 0)
+		{
+			PlayerSkills[4]--;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's reputation by 1 point.
+	/// </summary>
+	public void IncreaseReputation()
+	{
+		if (PlayerReputation != 20)
+		{
+			PlayerReputation++;
+		}
+	}
+
+	/// <summary>
+	/// Adjusts the player's reputation by 1 point. Should only be used during reputation loss events.
+	/// </summary>
+	public void DecreaseReputation()
+	{
+		if (PlayerReputation != -20)
+		{
+			PlayerReputation--;
+		}
 	}
 }
