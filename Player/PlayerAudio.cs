@@ -8,6 +8,7 @@ using VRC.Udon;
 public class PlayerAudio : UdonSharpBehaviour
 {
     //AudioSource Variables - Assigned in the Unity Editor
+    [Header("Player Movement")]
     [SerializeField] private AudioSource playerFootstep;
     [SerializeField] private AudioClip[] footstepSounds;
 
