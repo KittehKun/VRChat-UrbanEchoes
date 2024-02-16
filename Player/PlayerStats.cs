@@ -6,22 +6,47 @@ using VRC.Udon;
 public class PlayerStats : UdonSharpBehaviour
 {
 	//Global Variables
-	private readonly float HUNGER_TICK = 0.001f; //This is the amount of hunger that is removed every tick. This should be adjusted to fit the game's pace.
-	private readonly float THIRST_TICK = 0.001f; //This is the amount of thirst that is removed every tick. This should be adjusted to fit the game's pace.
+	private readonly float ENERGY_TICK = 0.1f; //The amount of energy to remove every tick.
+	private readonly float SLEEP_TICK = 0.05f; //The amount of sleep to remove every tick.
 	private readonly int SKILL_MAX = 10; //The maximum skill level a player can have.
+
+	//Tick Variables
+	private float tickInterval = 2f; //The timer used to determine when to remove energy and sleep. Represented in seconds.
+	private float timer = 0.0f; //The timer used to determine when to remove energy and sleep.
 
 	//Player Properties
 	public int PlayerHealth { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player respawns at the hospital and loses some money.
 	public double PlayerMoney { get; private set; } = 0;
-	public float PlayerHunger { get; private set; } = 100;
-	public float PlayerThirst { get; private set; } = 100;
+	public float PlayerEnergy { get; private set; } = 100;
+	public float PlayerSleep { get; private set; } = 100;
 	public string JobTitle { get; private set; } = "Unemployed";
 	public int[] PlayerSkills { get; private set; } //Skills start at 0 and can be increased by doing activities.
 	public int PlayerReputation { get; private set; } = 0; //It will be used to determine the player's standing in the community. Ranges from -20 to 20.
 
+	//HUD Elements
+	[SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
+
 	void Start()
 	{
 		PlayerSkills = new int[5]; //The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
+		playerHUD.UpdateHUD();
+	}
+
+	void Update()
+	{
+		// Update the timer
+		timer += Time.deltaTime;
+
+		// Check if it's time for the next tick
+		if (timer >= tickInterval)
+		{
+			// Perform energy and sleep calculations
+			NeedsTick();
+			Debug.Log("Player needs have been adjusted.");
+
+			// Reset the timer
+			timer = 0f;
+		}
 	}
 
 	//Methods
@@ -78,8 +103,9 @@ public class PlayerStats : UdonSharpBehaviour
 	/// </summary>
 	public void NeedsTick()
 	{
-		PlayerHunger -= HUNGER_TICK;
-		PlayerThirst -= THIRST_TICK;
+		PlayerEnergy -= ENERGY_TICK;
+		PlayerSleep -= SLEEP_TICK;
+		playerHUD.UpdateTick();
 	}
 
 	/// <summary>
