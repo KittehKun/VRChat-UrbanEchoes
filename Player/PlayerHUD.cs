@@ -13,8 +13,12 @@ public class PlayerHUD : UdonSharpBehaviour
     [Header("Player Stats")]
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI energyText;
-    [SerializeField] private TextMeshProUGUI sleepText;
     [SerializeField] private TextMeshProUGUI moneyText;
+
+    [Header("Job Specific Text")]
+    [SerializeField] private TextMeshProUGUI jobAcceptNotification; //Displays when a player accepts a job and meets the requirements.
+    [SerializeField] private TextMeshProUGUI jobDeclinedNotification; //Displays when a player fails to meet the requirements of a job.
+    [SerializeField] private TextMeshProUGUI jobBonusNotification; //This is used to display the bonus amount the player received for completing a job wave.
 
     [Header("HUD Canvas")]
     [SerializeField] private Transform hudCanvas;
@@ -37,7 +41,6 @@ public class PlayerHUD : UdonSharpBehaviour
     {
         healthText.text = $"H: {playerStats.PlayerHealth}";
         energyText.text = $"E: {playerStats.PlayerEnergy:F0}"; //Displays with no decimal places
-        sleepText.text = $"S: {playerStats.PlayerSleep:F0}"; //Displays with no decimal places
         moneyText.text = $"${playerStats.PlayerMoney:F2}"; //Displays with 2 decimal places
     }
 
@@ -47,9 +50,11 @@ public class PlayerHUD : UdonSharpBehaviour
     public void UpdateTick()
     {
         energyText.text = $"E: {playerStats.PlayerEnergy:F0}";
-        sleepText.text = $"S: {playerStats.PlayerSleep:F0}";
     }
 
+    /// <summary>
+    /// Moves the HUD to a position in front of the player's head and matches the rotation to the head rotation.
+    /// </summary>
     private void MoveHUD()
     {
 		// Get the player's head tracking data
@@ -62,5 +67,41 @@ public class PlayerHUD : UdonSharpBehaviour
 		// Match the HUD rotation to the head rotation
 		hudCanvas.SetPositionAndRotation(Vector3.Lerp(hudCanvas.position, desiredPosition, Time.deltaTime * 5f), headTrackingData.rotation);
 	}
+
+    public void DisplayJobAcceptNotification()
+    {
+		//Display the job accept notification text for 5 seconds
+        jobAcceptNotification.gameObject.SetActive(true);
+        SendCustomEventDelayedSeconds(nameof(DisableJobAcceptNotification), 5);
+	}
+
+    public void DisplayJobDeclinedNotification()
+    {
+		//Display the job declined notification text for 5 seconds
+		jobDeclinedNotification.gameObject.SetActive(true);
+        SendCustomEventDelayedSeconds(nameof(DisableJobDeclinedNotification), 5);
+	}
+
+	public void DisplayJobBonusNotification(double bonusAmount)
+    {
+		//Display the job bonus notification text for 5 seconds
+		jobBonusNotification.text = $"You received a bonus of ${bonusAmount:F2}!";
+		jobBonusNotification.gameObject.SetActive(true);
+        SendCustomEventDelayedSeconds(nameof(DisableBonusNotification), 5);
+	}
     
+    private void DisableBonusNotification()
+    {
+        jobBonusNotification.gameObject.SetActive(false);
+    }
+
+    private void DisableJobDeclinedNotification()
+    {
+        jobDeclinedNotification.gameObject.SetActive(false);
+    }
+
+    private void DisableJobAcceptNotification()
+    {
+        jobAcceptNotification.gameObject.SetActive(false);
+    }
 }

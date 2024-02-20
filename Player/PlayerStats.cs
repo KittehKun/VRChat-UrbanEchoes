@@ -7,19 +7,16 @@ public class PlayerStats : UdonSharpBehaviour
 {
 	//Global Variables
 	private readonly float ENERGY_TICK = 0.1f; //The amount of energy to remove every tick.
-	private readonly float SLEEP_TICK = 0.05f; //The amount of sleep to remove every tick.
 	private readonly int SKILL_MAX = 10; //The maximum skill level a player can have.
 
 	//Tick Variables
-	private float tickInterval = 2f; //The timer used to determine when to remove energy and sleep. Represented in seconds.
+	private readonly float tickInterval = 2f; //The timer used to determine when to remove energy and sleep. Represented in seconds.
 	private float timer = 0.0f; //The timer used to determine when to remove energy and sleep.
 
 	//Player Properties
 	public int PlayerHealth { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player respawns at the hospital and loses some money.
 	public double PlayerMoney { get; private set; } = 0;
 	public float PlayerEnergy { get; private set; } = 100;
-	public float PlayerSleep { get; private set; } = 100;
-	public string JobTitle { get; private set; } = "Unemployed";
 	public int[] PlayerSkills { get; private set; } //Skills start at 0 and can be increased by doing activities.
 	public int PlayerReputation { get; private set; } = 0; //It will be used to determine the player's standing in the community. Ranges from -20 to 20.
 
@@ -93,18 +90,12 @@ public class PlayerStats : UdonSharpBehaviour
 		PlayerHealth -= health;
 	}
 
-	public void SetJob(string job)
-	{
-		JobTitle = job;
-	}
-
 	/// <summary>
 	/// Adjusts the player's needs. This method should be called every tick.
 	/// </summary>
 	public void NeedsTick()
 	{
 		PlayerEnergy -= ENERGY_TICK;
-		PlayerSleep -= SLEEP_TICK;
 		playerHUD.UpdateTick();
 	}
 
