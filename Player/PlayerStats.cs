@@ -19,6 +19,7 @@ public class PlayerStats : UdonSharpBehaviour
 	public float PlayerEnergy { get; private set; } = 100;
 	public int[] PlayerSkills { get; private set; } //Skills start at 0 and can be increased by doing activities.
 	public int PlayerReputation { get; private set; } = 0; //It will be used to determine the player's standing in the community. Ranges from -20 to 20.
+	public bool OnJob { get; set; } = false; //If the player is currently on a job, this will be true. If the player is not on a job, this will be false.
 
 	//HUD Elements
 	[SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
@@ -39,7 +40,7 @@ public class PlayerStats : UdonSharpBehaviour
 		{
 			// Perform energy and sleep calculations
 			NeedsTick();
-			Debug.Log("Player needs have been adjusted.");
+			//Debug.Log("Player needs have been adjusted.");
 
 			// Reset the timer
 			timer = 0f;
@@ -93,7 +94,7 @@ public class PlayerStats : UdonSharpBehaviour
 	/// <summary>
 	/// Adjusts the player's needs. This method should be called every tick.
 	/// </summary>
-	public void NeedsTick()
+	private void NeedsTick()
 	{
 		PlayerEnergy -= ENERGY_TICK;
 		playerHUD.UpdateTick();
