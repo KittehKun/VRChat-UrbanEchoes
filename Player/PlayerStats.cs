@@ -24,6 +24,10 @@ public class PlayerStats : UdonSharpBehaviour
 	//HUD Elements
 	[SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
 
+	//Audio Elements
+	[SerializeField] private AudioSource audioSource; //Assigned in Unity | The audio source used to play sound effects.
+	[SerializeField] private AudioClip addMoneySFX; //Assigned in Unity | The sound effect that plays when the player receives money.
+
 	void Start()
 	{
 		PlayerSkills = new int[5]; //The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
@@ -55,6 +59,8 @@ public class PlayerStats : UdonSharpBehaviour
 	public void AddMoney(double amount)
 	{
 		PlayerMoney += amount;
+		audioSource.clip = addMoneySFX;
+		audioSource.Play();
 	}
 
 	/// <summary>
@@ -66,10 +72,6 @@ public class PlayerStats : UdonSharpBehaviour
 		if (PlayerMoney >= amount)
 		{
 			PlayerMoney -= amount;
-		}
-		else
-		{
-			//Play global money error sound once implemented
 		}
 	}
 

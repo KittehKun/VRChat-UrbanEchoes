@@ -25,12 +25,17 @@ public class JobScript : UdonSharpBehaviour
 
 	[Header("Job Task Items")]
 	[SerializeField] private Transform _jobTaskSpawner; //Set in Unity Inspector | The GameObject that will be enabled and disabled as the job task item spawner.
-	private Transform _taskItem; //The job task item that the player must deliver to the goal point. Disabled after task completed.
 	[SerializeField] private Transform _possibleTaskGoalPoints; //Set in Unity Inspector | The points the player must deliver the job task items to.
 	private Transform[] _goalPoints; //The points the player must deliver the job task items to. Disabled after job reset or task completed.
 	private Transform _activeGoalPoint; //The active goal point the player must deliver the job task item to. Disabled after job reset or task completed.
 	[SerializeField] private bool _hasCustomers = false; //Set in Unity Inspector | If the job has customer spawns, this will be true. By default, it is false.
 	[SerializeField] private Transform _customerSpawnPoint; //Set in Unity Inspector | The position where the customer will spawn. Usually in front of a register or computer station.
+
+	[Header("Job FX and SFX")]
+	[SerializeField] private AudioSource _jobSFX; //Set in Unity Inspector | The audio source that will play all job audio clips.
+	[SerializeField] private AudioClip _jobAcceptSFX; //Set in Unity Inspector | The sound effect that will play when the player accepts a job.
+	[SerializeField] private AudioClip _jobCompleteSFX; //Set in Unity Inspector | The sound effect that will play when the player completes a job wave.
+	[SerializeField] private AudioClip _jobFailedSFX; //Set in Unity Inspector | The sound effect that will play when the player fails a job wave and gets fired.
 
 	[Header("Player Stats")]
 	[SerializeField] private PlayerStats _playerStats; //Assigned in Unity | Important Player Stats are all accessible as public properties in the PlayerStats class
@@ -40,11 +45,8 @@ public class JobScript : UdonSharpBehaviour
 	void Start()
 	{
 		if (!_playerStats) _playerStats = GameObject.Find("Player").GetComponent<PlayerStats>(); Debug.LogError("PlayerStats was not assigned in Unity Inspector. Please assign before publishing.");
-		if(!_playerHUD) _playerHUD = GameObject.Find("Player").GetComponent<PlayerHUD>(); Debug.LogError("PlayerHUD was not assigned in Unity Inspector. Please assign before publishing.");
-		if(_hasCustomers && _customerSpawnPoint == null) Debug.LogError("The job has customers, but the customer spawn point was not assigned in Unity Inspector. Please assign a spawn point for customers.");
-		
-		//Check if the Job Task Items have moved from their initial position. If they have, display an error message.
-		if (_jobTaskSpawner.position != new Vector3(0, 0, 0)) Debug.LogWarning("The Job Task Spawner has not moved from its initial position. If this was intended, ignore this warning, otherwise please check the JobScript to ensure variables were set properly.");
+		if (!_playerHUD) _playerHUD = GameObject.Find("Player").GetComponent<PlayerHUD>(); Debug.LogError("PlayerHUD was not assigned in Unity Inspector. Please assign before publishing.");
+		if (_hasCustomers && _customerSpawnPoint == null) Debug.LogError("The job has customers, but the customer spawn point was not assigned in Unity Inspector. Please assign a spawn point for customers.");
 
 		//Fill the goal points array with the possible goal points - Only includes immediate children
 		int childCount = _possibleTaskGoalPoints.childCount;
@@ -63,7 +65,7 @@ public class JobScript : UdonSharpBehaviour
 			_waveTimer -= Time.deltaTime;
 
 			//Enable the timer text on the player's HUD
-			_playerHUD.EnableTimerText(); 
+			_playerHUD.EnableTimerText();
 
 			//Update the player's HUD with the time remaining in the wave
 			_playerHUD.UpdateTimer(_waveTimer);
@@ -71,13 +73,7 @@ public class JobScript : UdonSharpBehaviour
 			//If the wave timer reaches the time limit, the job is failed.
 			if (_waveTimer <= 0)
 			{
-				//Display the job failed notification
-				_playerHUD.DisplayJobFailedNotification();
-
-				//Reset the job
-				ResetJob();
-
-				_timerStarted = false;
+				FailJob();
 			}
 		}
 	}
@@ -113,11 +109,8 @@ public class JobScript : UdonSharpBehaviour
 			//Reset the job
 			ResetJob();
 
-			//Mark job objects as inactive
-			_jobTaskSpawner.gameObject.SetActive(false);
-			_taskItem.gameObject.SetActive(false);
-			_activeGoalPoint.gameObject.SetActive(false);
-			_customerSpawnPoint.gameObject.SetActive(false);
+			//Disable job items
+			DisableJobItemns();
 		}
 	}
 
@@ -126,10 +119,16 @@ public class JobScript : UdonSharpBehaviour
 	/// </summary>
 	private void BeginJob()
 	{
+		if (_playerStats.OnJob) return; //If the player is already on a job, do not start another job.
+
+		//Play the job accept sound effect
+		_jobSFX.clip = _jobAcceptSFX;
+		_jobSFX.Play();
+
 		//Update job status
 		_playerHUD.UpdateJobTitle(_jobName);
 		_playerStats.OnJob = true;
-		
+
 		//Reset the job first
 		ResetJob();
 
@@ -156,6 +155,10 @@ public class JobScript : UdonSharpBehaviour
 
 		//Update the player's HUD
 		_playerHUD.UpdateMoney();
+
+		//Play the job complete sound effect
+		_jobSFX.clip = _jobCompleteSFX;
+		_jobSFX.Play();
 	}
 
 	/// <summary>
@@ -165,11 +168,6 @@ public class JobScript : UdonSharpBehaviour
 	{
 		//Enable the job task spawner
 		_jobTaskSpawner.gameObject.SetActive(true); //Object will have a trigger collider that will collide with the goal point to complete the task.
-
-		//Enable the job task item and reset its position
-		_taskItem = _jobTaskSpawner.GetChild(0);
-		_taskItem.gameObject.SetActive(true);
-		_taskItem.SetPositionAndRotation(_jobTaskSpawner.position, _jobTaskSpawner.rotation); //Reset the task item's rotation to the spawner's rotation.
 
 		//Enable a random task goal point
 		_activeGoalPoint = _goalPoints[Random.Range(0, _goalPoints.Length)];
@@ -203,14 +201,10 @@ public class JobScript : UdonSharpBehaviour
 		//Disable the goal point
 		_activeGoalPoint.gameObject.SetActive(false);
 
-		//Reset the job task item
-		_taskItem.GetComponent<VRCPickup>().Drop(); //Force drop the task item if the player is holding it
-		_taskItem.SetPositionAndRotation(_jobTaskSpawner.position, _jobTaskSpawner.rotation);
-
 		if (_currentWaveTaskAmount >= _waveTaskAmount)
 		{
-			Debug.Log("All tasks completed in wave. Increasing difficulty and rewarding player with a bonus.");
-			
+			//Debug.Log("All tasks completed in wave. Increasing difficulty and rewarding player with a bonus.");
+
 			//Calculate the bonus for the player
 			CalculatePayout();
 
@@ -253,6 +247,41 @@ public class JobScript : UdonSharpBehaviour
 		_waveTaskAmount = Random.Range(2, 5);
 		_currentWaveTaskAmount = 0;
 		_playerHUD.DisableTimerText();
+	}
+
+	/// <summary>
+	/// Resets the job completely and removes the player from the job.
+	/// </summary>
+	private void FailJob()
+	{
+		//Display the job failed notification
+		_playerHUD.DisplayJobFailedNotification();
+
+		//Reset the job
+		ResetJob();
+
+		//Play the job failed sound effect
+		_jobSFX.clip = _jobFailedSFX;
+		_jobSFX.Play();
+
+		//Disable the job timer
+		_timerStarted = false;
+
+		//Disable job items
+		DisableJobItemns();
+
+		//Reset the player's job status
+		_playerStats.OnJob = false;
+	}
+
+	/// <summary>
+	/// Disables all GameObjects associated with the job. This method is called when the player fails a job.
+	/// </summary>
+	private void DisableJobItemns()
+	{
+		_jobTaskSpawner.gameObject.SetActive(false);
+		_activeGoalPoint.gameObject.SetActive(false);
+		_customerSpawnPoint.gameObject.SetActive(false);
 	}
 
 	public override void Interact()
