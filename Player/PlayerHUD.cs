@@ -68,9 +68,9 @@ public class PlayerHUD : UdonSharpBehaviour
     /// Updates the job task HUD element with the current job title.
     /// </summary>
     /// <param name="jobTitle"></param>
-    public void UpdateJobTitle(string jobTitle)
+    public void UpdateJobTitle(string jobTitle, int jobWave)
     {
-        jobTitleText.text = jobTitle;
+        jobTitleText.text = $"{jobTitle} - Lvl {jobWave}";
     }
     
     /// <summary>

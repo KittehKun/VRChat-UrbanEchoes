@@ -16,6 +16,7 @@ public class TaskItem : UdonSharpBehaviour
 	[Header("Audio SFX")]
 	[SerializeField] private AudioSource audioSource; //The sound effect that plays when the player picks up the task item. Set in Unity Inspector.
 	[SerializeField] private AudioClip pickupSFX; //The sound effect that plays when the player picks up the task item. Set in Unity Inspector.
+	[SerializeField] private AudioClip popSFX; //The sound effect that plays when the task item is delivered to a goal point. Set in Unity Inspector.
 
 	[Header("Particle FX")]
 	[SerializeField] private ParticleSystem taskCompletedFX; //The particle effect that plays when the task item is delivered to a goal point. Set in Unity Inspector.
@@ -46,9 +47,14 @@ public class TaskItem : UdonSharpBehaviour
 		taskCompletedFX.transform.position = transform.position;
 		taskCompletedFX.Emit(10);
 
+		//Play the sound effect
+		audioSource.clip = popSFX;
+		audioSource.Play();
+
+		//Respawn the task item at the original spawn point
 		transform.GetComponent<VRCPickup>().Drop(); //Force drop the task item if the player is holding it
 		Transform taskSpawner = this.transform.parent; //Get the task spawner that the task item was spawned from
-		transform.SetPositionAndRotation(taskSpawner.position, taskSpawner.rotation); //Respawn the task item at the original spawn point
+		transform.SetPositionAndRotation(taskSpawner.position, taskSpawner.rotation);
 
 		jobScript.TaskCompleted(); //Notify the JobScript that the task item has been delivered to a goal point
 	}

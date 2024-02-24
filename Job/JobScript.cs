@@ -28,8 +28,6 @@ public class JobScript : UdonSharpBehaviour
 	[SerializeField] private Transform _possibleTaskGoalPoints; //Set in Unity Inspector | The points the player must deliver the job task items to.
 	private Transform[] _goalPoints; //The points the player must deliver the job task items to. Disabled after job reset or task completed.
 	private Transform _activeGoalPoint; //The active goal point the player must deliver the job task item to. Disabled after job reset or task completed.
-	[SerializeField] private bool _hasCustomers = false; //Set in Unity Inspector | If the job has customer spawns, this will be true. By default, it is false.
-	[SerializeField] private Transform _customerSpawnPoint; //Set in Unity Inspector | The position where the customer will spawn. Usually in front of a register or computer station.
 
 	[Header("Job FX and SFX")]
 	[SerializeField] private AudioSource _jobSFX; //Set in Unity Inspector | The audio source that will play all job audio clips.
@@ -46,7 +44,6 @@ public class JobScript : UdonSharpBehaviour
 	{
 		if (!_playerStats) _playerStats = GameObject.Find("Player").GetComponent<PlayerStats>(); Debug.LogError("PlayerStats was not assigned in Unity Inspector. Please assign before publishing.");
 		if (!_playerHUD) _playerHUD = GameObject.Find("Player").GetComponent<PlayerHUD>(); Debug.LogError("PlayerHUD was not assigned in Unity Inspector. Please assign before publishing.");
-		if (_hasCustomers && _customerSpawnPoint == null) Debug.LogError("The job has customers, but the customer spawn point was not assigned in Unity Inspector. Please assign a spawn point for customers.");
 
 		//Fill the goal points array with the possible goal points - Only includes immediate children
 		int childCount = _possibleTaskGoalPoints.childCount;
@@ -70,7 +67,7 @@ public class JobScript : UdonSharpBehaviour
 			//Update the player's HUD with the time remaining in the wave
 			_playerHUD.UpdateTimer(_waveTimer);
 
-			//If the wave timer reaches the time limit, the job is failed.
+			//If the wave timer reaches the time limit, the job is failed
 			if (_waveTimer <= 0)
 			{
 				FailJob();
@@ -126,7 +123,7 @@ public class JobScript : UdonSharpBehaviour
 		_jobSFX.Play();
 
 		//Update job status
-		_playerHUD.UpdateJobTitle(_jobName);
+		_playerHUD.UpdateJobTitle(_jobName, 1);
 		_playerStats.OnJob = true;
 
 		//Reset the job first
@@ -173,15 +170,6 @@ public class JobScript : UdonSharpBehaviour
 		_activeGoalPoint = _goalPoints[Random.Range(0, _goalPoints.Length)];
 		_activeGoalPoint.gameObject.SetActive(true);
 
-		//If the job has customers, perform a coin flip to determine if a customer will spawn at a register.
-		if (_hasCustomers)
-		{
-			if (Random.Range(0, 2) == 0)
-			{
-				_customerSpawnPoint.gameObject.SetActive(true); //Customers will have an interaction collider. Player's will then need to choose the correct option on the POS/Terminal/Etc.
-			}
-		}
-
 		_playerHUD.UpdateJobTaskCount(_currentWaveTaskAmount, _waveTaskAmount);
 	}
 
@@ -224,6 +212,9 @@ public class JobScript : UdonSharpBehaviour
 			if (_jobWave <= 3) taskMax += Random.Range(1, 3);
 			_waveTaskAmount = Random.Range(taskMin, taskMax);
 			Debug.Log($"Task Amount is {_waveTaskAmount} this wave.");
+
+			//Update the player's HUD
+			_playerHUD.UpdateJobTitle(_jobName, _jobWave);
 
 			//Generate a new task
 			GenerateTask();
@@ -281,7 +272,6 @@ public class JobScript : UdonSharpBehaviour
 	{
 		_jobTaskSpawner.gameObject.SetActive(false);
 		_activeGoalPoint.gameObject.SetActive(false);
-		_customerSpawnPoint.gameObject.SetActive(false);
 	}
 
 	public override void Interact()
