@@ -24,12 +24,13 @@ public class JobScript : UdonSharpBehaviour
 	private float _waveTimer; //The timer used to calculate the time remaining in the wave.
 
 	[Header("Job Task Items")]
+	[SerializeField] private Transform _jobPickupMesh; //Set in Unity Inspector | The GameObject that will be enabled and disabled as the job task item.
 	[SerializeField] private Transform _jobTaskSpawner; //Set in Unity Inspector | The GameObject that will be enabled and disabled as the job task item spawner.
 	[SerializeField] private Transform _possibleTaskGoalPoints; //Set in Unity Inspector | The points the player must deliver the job task items to.
 	private Transform[] _goalPoints; //The points the player must deliver the job task items to. Disabled after job reset or task completed.
 	private Transform _activeGoalPoint; //The active goal point the player must deliver the job task item to. Disabled after job reset or task completed.
 
-	[Header("Job FX and SFX")]
+	[Header("Job SFX")]
 	[SerializeField] private AudioSource _jobSFX; //Set in Unity Inspector | The audio source that will play all job audio clips.
 	[SerializeField] private AudioClip _jobAcceptSFX; //Set in Unity Inspector | The sound effect that will play when the player accepts a job.
 	[SerializeField] private AudioClip _jobCompleteSFX; //Set in Unity Inspector | The sound effect that will play when the player completes a job wave.
@@ -117,6 +118,10 @@ public class JobScript : UdonSharpBehaviour
 	private void BeginJob()
 	{
 		if (_playerStats.OnJob) return; //If the player is already on a job, do not start another job.
+
+		//Disable the job pickup mesh
+		_jobPickupMesh.gameObject.SetActive(false);
+		transform.GetComponent<BoxCollider>().enabled = false;
 
 		//Play the job accept sound effect
 		_jobSFX.clip = _jobAcceptSFX;
@@ -263,6 +268,10 @@ public class JobScript : UdonSharpBehaviour
 
 		//Reset the player's job status
 		_playerStats.OnJob = false;
+
+		//Reenable the job pickup mesh
+		_jobPickupMesh.gameObject.SetActive(true);
+		transform.GetComponent<BoxCollider>().enabled = true;
 	}
 
 	/// <summary>
