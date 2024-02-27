@@ -120,7 +120,7 @@ public class JobScript : UdonSharpBehaviour
 		if (_playerStats.OnJob) return; //If the player is already on a job, do not start another job.
 
 		//Disable the job pickup mesh
-		_jobPickupMesh.gameObject.SetActive(false);
+		_jobPickupMesh.GetComponent<MeshRenderer>().enabled = false;
 		transform.GetComponent<BoxCollider>().enabled = false;
 
 		//Play the job accept sound effect
@@ -270,7 +270,7 @@ public class JobScript : UdonSharpBehaviour
 		_playerStats.OnJob = false;
 
 		//Reenable the job pickup mesh
-		_jobPickupMesh.gameObject.SetActive(true);
+		_jobPickupMesh.GetComponent<MeshRenderer>().enabled = true;
 		transform.GetComponent<BoxCollider>().enabled = true;
 	}
 

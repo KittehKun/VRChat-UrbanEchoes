@@ -6,11 +6,11 @@ using VRC.Udon;
 
 public class SpinFloatGoalMarker : UdonSharpBehaviour
 {
-    private float xOffset;
+    private float yOffset;
 
     private void Start()
     {
-		xOffset = transform.localPosition.x;
+		yOffset = transform.localPosition.y;
 	}
 
     void Update()
@@ -18,7 +18,7 @@ public class SpinFloatGoalMarker : UdonSharpBehaviour
         //Rotate the object around the Z axis
         transform.Rotate(new Vector3(0, 0, 1), Time.deltaTime * 100);
 
-        //Move the object up and down on the local X axis using a sine wave from the current position
-        transform.localPosition = new Vector3(Mathf.Sin(Time.time) * 0.25f + xOffset, transform.localPosition.y, transform.localPosition.z);
+        //Move the object up and down on the local Y axis using a sine wave from the current position
+        transform.localPosition = new Vector3(transform.localPosition.x, Mathf.Sin(Time.time) * 0.1f + yOffset, transform.localPosition.z);
     }
 }

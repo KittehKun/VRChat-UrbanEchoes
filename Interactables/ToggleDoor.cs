@@ -4,17 +4,27 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class ToggleDoor : UdonSharpBehaviour
 {
+	[SerializeField] private bool isLocked = false; //By default, all doors are unlocked unless specified otherwise in the Unity Inspector.
     [SerializeField] private Animator doorAnimation;
     
-    [UdonSynced] private bool isOpen = false;
+    private bool isOpen = false;
 	[SerializeField] private AudioSource doorSound;
+	[SerializeField] private AudioClip unlockedSound;
+	[SerializeField] private AudioClip lockedSound;
 
     public override void Interact()
-    {
-		Networking.SetOwner(Networking.LocalPlayer, gameObject); //Set the owner of the object to the local player
-		
+    {		
+		if(isLocked)
+		{
+			//Play the locked sound
+			doorSound.clip = lockedSound;
+			doorSound.Play();
+			return;
+		}
+
 		if (!isOpen)
 		{
 			//Play Animation
@@ -33,6 +43,7 @@ public class ToggleDoor : UdonSharpBehaviour
 		}
 
 		//Play the door sound
+		doorSound.clip = unlockedSound;
 		doorSound.Play();
 	}
 
