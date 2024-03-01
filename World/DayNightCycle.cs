@@ -9,6 +9,7 @@ public class DayNightCycle : UdonSharpBehaviour
 {
 	[SerializeField] private Light sunLight; // Directional light representing the sun
 	[SerializeField] private Light moonLight; // Directional light representing the moon
+	[SerializeField] private Material skybox; // Skybox material
 	[SerializeField] private Gradient ambientColorGradient; // Gradient defining ambient color over time
 	[SerializeField] private int startingHour = 10; // Starting hour of the day (By default 10AM unless specified in the Inspector)
 	[SerializeField] private AnimationCurve sunIntensityCurve; // Curve defining sun intensity over time
@@ -41,6 +42,9 @@ public class DayNightCycle : UdonSharpBehaviour
 
 		// Set the ambient colors
 		SetAmbientColors();
+
+		// Set the rotation and exposure of the skybox
+		SetSkyboxSettings();
 
 		// Rotate the sunLight
 		RotateSunLight(CalculateNormalizedTime());
@@ -80,12 +84,25 @@ public class DayNightCycle : UdonSharpBehaviour
 	{
 		// Set the ambient color based on the time of day
 		Color ambientSkyColor = ambientColorGradient.Evaluate(CalculateNormalizedTime());
-		Color ambientEquatorColor = ambientSkyColor * 0.5f;
-		Color ambientGroundColor = ambientSkyColor * 0.2f;
+		Color ambientEquatorColor = ambientSkyColor * 0.8f;
+		Color ambientGroundColor = ambientSkyColor * 0.5f;
 
 		RenderSettings.ambientSkyColor = ambientSkyColor;
 		RenderSettings.ambientEquatorColor = ambientEquatorColor;
 		RenderSettings.ambientGroundColor = ambientGroundColor;
+	}
+
+	private void SetSkyboxSettings()
+	{
+		// Set the rotation of the skybox based on the time of day
+		RenderSettings.skybox.SetFloat("_Rotation1", CalculateNormalizedTime() * 360f);
+		RenderSettings.skybox.SetFloat("_Rotation2", CalculateNormalizedTime() * 360f);
+
+		// Set the float value "_Blend" depending on the time of day - This is a custom property added to the skybox shader
+		// Calculate the blend value for smooth transition between day and night
+		float blend = 1f - Mathf.PingPong(CalculateNormalizedTime() * 2f, 1f);
+		RenderSettings.skybox.SetFloat("_Blend", blend);
+
 	}
 
 	// Method to rotate the sunLight based on the time of day - Indirectly rotates the moonLight as well as moonLight is a child of sunLight
