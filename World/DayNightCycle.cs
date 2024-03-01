@@ -8,6 +8,8 @@ using VRC.Udon;
 public class DayNightCycle : UdonSharpBehaviour
 {
 	[SerializeField] private Light sunLight; // Directional light representing the sun
+	[SerializeField] private Light moonLight; // Directional light representing the moon
+	[SerializeField] private Gradient ambientColorGradient; // Gradient defining ambient color over time
 	[SerializeField] private int startingHour = 10; // Starting hour of the day (By default 10AM unless specified in the Inspector)
 	[SerializeField] private AnimationCurve sunIntensityCurve; // Curve defining sun intensity over time
 	[SerializeField] private float timeScale = 30f; // Time scale (how many seconds in real time is equivalent to 1 hour in game time)
@@ -24,34 +26,83 @@ public class DayNightCycle : UdonSharpBehaviour
 		timeOfDay = startingHour;
 
 		// Set the initial brightness
-		SetBrightness(sunIntensityCurve.Evaluate(startingHour / hoursInDay));
+		SetBrightness(sunLight, sunIntensityCurve.Evaluate(startingHour / hoursInDay));
 	}
 
 	// Update is called once per frame
-	void Update()
+	private void FixedUpdate()
+	{
+		// Calculate the time of day
+		CalculateTime();
+
+		// Set the brightness
+		SetBrightness(sunLight, CalculateSunBrightness());
+		SetBrightness(moonLight, CalculateMoonBrightness());
+
+		// Set the ambient colors
+		SetAmbientColors();
+
+		// Rotate the sunLight
+		RotateSunLight(CalculateNormalizedTime());
+	}
+
+	private void CalculateTime()
 	{
 		// Increment timeOfDay (assuming each frame represents 1 hour)
 		timeOfDay += Time.deltaTime / timeScale;
 
 		// Ensure timeOfDay stays within 24 hours
 		timeOfDay %= hoursInDay;
+	}
 
-		// Normalize timeOfDay to a value between 0 and 1
-		float normalizedTime = timeOfDay / hoursInDay;
+	private float CalculateSunBrightness()
+	{
+		return sunIntensityCurve.Evaluate(CalculateNormalizedTime());
+	}
 
-		// Sample the AnimationCurve to get the brightness value
-		float brightness = sunIntensityCurve.Evaluate(normalizedTime);
+	private float CalculateMoonBrightness()
+	{
+		return 1f - CalculateSunBrightness();
+	}
 
-		// Set the brightness
-		SetBrightness(brightness);
+	private float CalculateNormalizedTime()
+	{
+		return timeOfDay / hoursInDay;
 	}
 
 	// Method to set the brightness (placeholder)
-	private void SetBrightness(float brightness)
+	private void SetBrightness(Light targetLight, float brightness)
 	{
-		if (sunLight != null)
+		targetLight.intensity = brightness;
+	}
+
+	private void SetAmbientColors()
+	{
+		// Set the ambient color based on the time of day
+		Color ambientSkyColor = ambientColorGradient.Evaluate(CalculateNormalizedTime());
+		Color ambientEquatorColor = ambientSkyColor * 0.5f;
+		Color ambientGroundColor = ambientSkyColor * 0.2f;
+
+		RenderSettings.ambientSkyColor = ambientSkyColor;
+		RenderSettings.ambientEquatorColor = ambientEquatorColor;
+		RenderSettings.ambientGroundColor = ambientGroundColor;
+	}
+
+	// Method to rotate the sunLight based on the time of day - Indirectly rotates the moonLight as well as moonLight is a child of sunLight
+	private void RotateSunLight(float normalizedTime)
+	{
+		// Calculate the angle to rotate the sunLight
+		float angle;
+		if (timeOfDay < 12f)
 		{
-			sunLight.intensity = brightness;
+			angle = Mathf.Lerp(-90f, 90f, normalizedTime / 0.5f); // Rotate from -90 degrees (12AM) to 0 degrees (12PM)
 		}
+		else
+		{
+			angle = Mathf.Lerp(90f, -90f, (normalizedTime - 0.5f) / 0.5f); // Rotate from 90 degrees (12PM) to -90 degrees (12AM)
+		}
+
+		// Set the rotation of the sunLight - The moonLight will rotate with it
+		sunLight.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
 	}
 }
