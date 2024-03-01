@@ -186,10 +186,11 @@ public class JobScript : UdonSharpBehaviour
 		//Check if the player has completed the task amount for the wave
 		_currentWaveTaskAmount++;
 
-		//Add the task pay to the player's money
+		//Add the task pay to the player's money and decrease the player's energy
 		_taskPay = Random.Range(0.01f, 0.26f);
 		_playerStats.AddMoney(_taskPay);
 		_playerHUD.UpdateMoney();
+		_playerStats.DecreaseEnergy();
 
 		//Disable the goal point
 		_activeGoalPoint.gameObject.SetActive(false);

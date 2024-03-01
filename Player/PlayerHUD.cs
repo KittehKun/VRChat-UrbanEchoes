@@ -28,12 +28,12 @@ public class PlayerHUD : UdonSharpBehaviour
     [SerializeField] private Transform hudCanvas;
 
 
-    void Start()
+    private void Start()
     {
         if (!playerStats) playerStats = GetComponent<PlayerStats>(); //If the playerStats field is not assigned in Unity, script should be on the same GameObject as the PlayerStats component
     }
 
-    void Update()
+    private void Update()
     {
         MoveHUD();
 	}
@@ -168,5 +168,22 @@ public class PlayerHUD : UdonSharpBehaviour
     public void DisableJobAcceptNotification()
     {
         jobAcceptNotification.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Marks the energy text as red for a short duration to indicate the player has lost energy.
+    /// </summary>
+    public void DecreaseEnergy()
+    {
+        energyText.color = Color.red;
+		SendCustomEventDelayedSeconds("ResetEnergyColor", 1);
+    }
+
+    /// <summary>
+    /// Resets the energy text color to white. Called from Udon Behaviour event.
+    /// </summary>
+    public void ResetEnergyColor()
+    {
+        energyText.color = Color.white;
     }
 }

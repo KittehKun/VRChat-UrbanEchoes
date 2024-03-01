@@ -262,6 +262,7 @@ public class OfficeJobScript : UdonSharpBehaviour
         bonusPay = basePay * (jobWave * 0.1) + Random.Range(0.1f, 1f);
         playerStats.AddMoney(bonusPay + taskPay);
         playerHUD.UpdateMoney();
+        playerStats.DecreaseEnergy();
 
         jobWave++;
 

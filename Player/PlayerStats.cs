@@ -236,4 +236,16 @@ public class PlayerStats : UdonSharpBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Adjusts the player's energy by a random amount between 0.5 and 3. Called when the player completes an activity.
+	/// </summary>
+	public void DecreaseEnergy()
+	{
+        if (PlayerEnergy != 0)
+        {
+			PlayerEnergy -= UnityEngine.Random.Range(0.5f, 3f);
+			playerHUD.DecreaseEnergy();
+        }
+    }
+
 }
