@@ -46,6 +46,9 @@ public class DayNightCycle : UdonSharpBehaviour
 		// Set the rotation and exposure of the skybox
 		SetSkyboxSettings();
 
+		// Set the fog
+		SetFog();
+
 		// Rotate the sunLight
 		RotateSunLight(CalculateNormalizedTime());
 	}
@@ -121,5 +124,16 @@ public class DayNightCycle : UdonSharpBehaviour
 
 		// Set the rotation of the sunLight - The moonLight will rotate with it
 		sunLight.transform.rotation = Quaternion.Euler(angle, 0f, 0f);
+	}
+
+	// Method to set the fog based on the time of day - During the night, the fog is denser and has a different color
+	private void SetFog()
+	{
+		// Set the fog color based on the time of day
+		Color fogColor = ambientColorGradient.Evaluate(CalculateNormalizedTime());
+		RenderSettings.fogColor = fogColor;
+
+		// Set the fog end density on the time of day using the animation curve with a minimum value of 50
+		RenderSettings.fogEndDistance = sunIntensityCurve.Evaluate(CalculateNormalizedTime()) * 50f + 50f;
 	}
 }
