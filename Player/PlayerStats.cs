@@ -1,5 +1,6 @@
 ﻿using System;
 using UdonSharp;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
@@ -29,13 +30,13 @@ public class PlayerStats : UdonSharpBehaviour
 	[SerializeField] private AudioSource audioSource; //Assigned in Unity | The audio source used to play sound effects.
 	[SerializeField] private AudioClip addMoneySFX; //Assigned in Unity | The sound effect that plays when the player receives money.
 
-	void Start()
+	private void Start()
 	{
 		PlayerSkills = new int[5]; //The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
 		playerHUD.UpdateHUD();
 	}
 
-	void Update()
+	private void Update()
 	{
 		// Update the timer
 		timer += Time.deltaTime;
@@ -99,6 +100,7 @@ public class PlayerStats : UdonSharpBehaviour
 	/// </summary>
 	private void NeedsTick()
 	{
+		if(PlayerEnergy > 0)
 		PlayerEnergy -= ENERGY_TICK;
 		playerHUD.UpdateTick();
 	}
@@ -129,11 +131,11 @@ public class PlayerStats : UdonSharpBehaviour
 	/// <summary>
 	/// Adjusts the player's fitness skill by 1 point.
 	/// </summary>
-	public void IncreaseFitness()
+	public void IncreaseFitness(int amount)
 	{
 		if (PlayerSkills[1] != SKILL_MAX)
 		{
-			PlayerSkills[1]++;
+			PlayerSkills[1] += amount;
 		}
 	}
 
@@ -243,9 +245,22 @@ public class PlayerStats : UdonSharpBehaviour
 	{
         if (PlayerEnergy != 0)
         {
-			PlayerEnergy -= UnityEngine.Random.Range(0.5f, 3f);
+			PlayerEnergy -= UnityEngine.Random.Range(0.1f, 1f);
 			playerHUD.DecreaseEnergy();
         }
     }
+
+	/// <summary>
+	/// Adjusts the player's energy by a specific amount. Called when the player completes an activity.
+	/// </summary>
+	/// <param name="amount"></param>
+	public void DecreaseEnergy(float amount)
+	{
+		if (PlayerEnergy != 0)
+		{
+			PlayerEnergy -= amount;
+			playerHUD.DecreaseEnergy();
+		}
+	}
 
 }
