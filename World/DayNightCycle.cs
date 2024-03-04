@@ -32,6 +32,8 @@ public class DayNightCycle : UdonSharpBehaviour
 	// Update is called once per frame
 	private void FixedUpdate()
 	{
+		if (!Networking.IsOwner(transform.gameObject)) return; // Only the owner of the object can update the time of day
+		
 		// Calculate the time of day
 		CalculateTime();
 
@@ -63,11 +65,6 @@ public class DayNightCycle : UdonSharpBehaviour
 	private float CalculateSunBrightness()
 	{
 		return sunIntensityCurve.Evaluate(CalculateNormalizedTime());
-	}
-
-	private float CalculateMoonBrightness()
-	{
-		return 1f - CalculateSunBrightness();
 	}
 
 	private float CalculateNormalizedTime()
@@ -136,10 +133,5 @@ public class DayNightCycle : UdonSharpBehaviour
 
 		// Set the fog end density on the time of day using the animation curve with a minimum value of 100
 		RenderSettings.fogEndDistance = Mathf.Max(100f, sunIntensityCurve.Evaluate(CalculateNormalizedTime()) * 1000f);
-	}
-
-	public override void OnDeserialization()
-	{
-
 	}
 }
