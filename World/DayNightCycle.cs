@@ -18,7 +18,7 @@ public class DayNightCycle : UdonSharpBehaviour
 	private const float hoursInDay = 24f;
 
 	// Current time of day in hours (start at 10:00 AM)
-	[SerializeField] private float timeOfDay = 0;
+	[UdonSynced] [SerializeField] private float timeOfDay = 0;
 
 	private void Start()
 	{
@@ -136,5 +136,10 @@ public class DayNightCycle : UdonSharpBehaviour
 
 		// Set the fog end density on the time of day using the animation curve with a minimum value of 100
 		RenderSettings.fogEndDistance = Mathf.Max(100f, sunIntensityCurve.Evaluate(CalculateNormalizedTime()) * 1000f);
+	}
+
+	public override void OnDeserialization()
+	{
+
 	}
 }
