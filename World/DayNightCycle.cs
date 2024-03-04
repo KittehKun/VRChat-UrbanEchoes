@@ -32,10 +32,11 @@ public class DayNightCycle : UdonSharpBehaviour
 	// Update is called once per frame
 	private void FixedUpdate()
 	{
-		if (!Networking.IsOwner(transform.gameObject)) return; // Only the owner of the object can update the time of day
-		
-		// Calculate the time of day
-		CalculateTime();
+		if (Networking.IsOwner(transform.gameObject)) // Only the owner of the object should calculate the time
+		{
+			CalculateTime();
+			RequestSerialization(); // Request a network update to sync the time with other clients
+		}
 
 		// Set the brightness
 		SetBrightness(sunLight, CalculateSunBrightness());

@@ -1,9 +1,5 @@
-﻿using System;
-using UdonSharp;
-using UnityEditor.ShaderGraph.Internal;
+﻿using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
 
 public class PlayerStats : UdonSharpBehaviour
 {
