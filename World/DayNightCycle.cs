@@ -8,7 +8,6 @@ using VRC.Udon;
 public class DayNightCycle : UdonSharpBehaviour
 {
 	[SerializeField] private Light sunLight; // Directional light representing the sun
-	[SerializeField] private Light moonLight; // Directional light representing the moon
 	[SerializeField] private Material skybox; // Skybox material
 	[SerializeField] private Gradient ambientColorGradient; // Gradient defining ambient color over time
 	[SerializeField] private int startingHour = 10; // Starting hour of the day (By default 10AM unless specified in the Inspector)
@@ -38,7 +37,6 @@ public class DayNightCycle : UdonSharpBehaviour
 
 		// Set the brightness
 		SetBrightness(sunLight, CalculateSunBrightness());
-		SetBrightness(moonLight, CalculateMoonBrightness());
 
 		// Set the ambient colors
 		SetAmbientColors();
@@ -101,6 +99,9 @@ public class DayNightCycle : UdonSharpBehaviour
 		RenderSettings.skybox.SetFloat("_Rotation1", CalculateNormalizedTime() * 360f);
 		RenderSettings.skybox.SetFloat("_Rotation2", CalculateNormalizedTime() * 360f);
 
+		// Set the exposure of the skybox based on the time of day
+		RenderSettings.skybox.SetFloat("_Exposure2", sunIntensityCurve.Evaluate(CalculateNormalizedTime())); //_Exposure 2 is the night time texture
+
 		// Set the float value "_Blend" depending on the time of day - This is a custom property added to the skybox shader
 		// Calculate the blend value for smooth transition between day and night
 		float blend = 1f - Mathf.PingPong(CalculateNormalizedTime() * 2f, 1f);
@@ -133,7 +134,7 @@ public class DayNightCycle : UdonSharpBehaviour
 		Color fogColor = ambientColorGradient.Evaluate(CalculateNormalizedTime());
 		RenderSettings.fogColor = fogColor;
 
-		// Set the fog end density on the time of day using the animation curve with a minimum value of 50
-		RenderSettings.fogEndDistance = sunIntensityCurve.Evaluate(CalculateNormalizedTime()) * 50f + 50f;
+		// Set the fog end density on the time of day using the animation curve with a minimum value of 100
+		RenderSettings.fogEndDistance = Mathf.Max(100f, sunIntensityCurve.Evaluate(CalculateNormalizedTime()) * 1000f);
 	}
 }
