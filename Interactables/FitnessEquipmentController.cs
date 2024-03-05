@@ -4,6 +4,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class FitnessEquipmentController : UdonSharpBehaviour
 {   
     [Header("Player Stats")]
@@ -12,7 +13,6 @@ public class FitnessEquipmentController : UdonSharpBehaviour
     [Header("Audio SFX")]
     [SerializeField] private AudioSource audioSource; //Used for playing the sound of the gym equipment
     [SerializeField] private AudioClip fitnessSFX; //The sound effect that plays when the player uses the fitness equipment
-    [SerializeField] private AudioClip altFitnessSFX; //The sound effect that plays when the player uses the fitness equipment
 
     [Header("Training Minigame")]
     [SerializeField] private Transform fitnessMinigame; //The minigame for fitness skill training
@@ -44,6 +44,8 @@ public class FitnessEquipmentController : UdonSharpBehaviour
     {
         isTraining = true;
         fitnessMinigame.gameObject.SetActive(true);
+        audioSource.clip = fitnessSFX; //Plays the whistle SFX
+        audioSource.Play();
     }
 
     private void EndTraining(bool finishedTraining)

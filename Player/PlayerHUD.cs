@@ -5,6 +5,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class PlayerHUD : UdonSharpBehaviour
 {
     [Header("Player Stats Script")]
