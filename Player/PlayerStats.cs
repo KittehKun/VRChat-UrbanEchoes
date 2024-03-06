@@ -14,8 +14,10 @@ public class PlayerStats : UdonSharpBehaviour
 
 	//Player Properties
 	public int PlayerHealth { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player respawns at the hospital and loses some money.
+	public int MaxHealth { get; } = 100; //The maximum health the player can have.
 	public double PlayerMoney { get; private set; } = 0;
 	public float PlayerEnergy { get; private set; } = 100;
+	public int MaxEnergy { get; } = 100; //The maximum energy the player can have.
 	public int[] PlayerSkills { get; private set; } //Skills start at 0 and can be increased by doing activities.
 	public int PlayerReputation { get; private set; } = 0; //It will be used to determine the player's standing in the community. Ranges from -20 to 20.
 	public bool OnJob { get; set; } = false; //If the player is currently on a job, this will be true. If the player is not on a job, this will be false.
@@ -242,7 +244,7 @@ public class PlayerStats : UdonSharpBehaviour
 	{
         if (PlayerEnergy != 0)
         {
-			PlayerEnergy -= UnityEngine.Random.Range(0.1f, 1f);
+			PlayerEnergy -= Random.Range(0.1f, 1f);
 			playerHUD.DecreaseEnergy();
         }
     }

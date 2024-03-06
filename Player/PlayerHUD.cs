@@ -2,6 +2,7 @@
 using TMPro;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -27,6 +28,8 @@ public class PlayerHUD : UdonSharpBehaviour
 
     [Header("HUD Canvas")]
     [SerializeField] private Transform hudCanvas;
+    [SerializeField] private Image healthSlider; //Represents the health bar foreground image - Used for as the health bar slider
+    [SerializeField] private Image energySlider; //Represents the energy bar foreground image - Used for as the energy bar slider
 
 
     private void Start()
@@ -44,9 +47,17 @@ public class PlayerHUD : UdonSharpBehaviour
     /// </summary>
     public void UpdateHUD()
     {
-        healthText.text = $"H: {playerStats.PlayerHealth}";
-        energyText.text = $"E: {playerStats.PlayerEnergy:F0}"; //Displays with no decimal places
-        moneyText.text = $"${playerStats.PlayerMoney:F2}"; //Displays with 2 decimal places
+        //healthText.text = $"H: {playerStats.PlayerHealth}";
+        //energyText.text = $"E: {playerStats.PlayerEnergy:F0}"; //Displays with no decimal places
+        moneyText.text = $"${playerStats.PlayerMoney:F2}"; //Displays with 2 decimal 
+
+        //Normalizes the player's health to a value between 0 and 1
+        float fillAmount = playerStats.PlayerHealth / playerStats.MaxHealth;
+        healthSlider.fillAmount = fillAmount; //Updates the health bar slider fill amount
+
+        //Normalizes the player's energy to a value between 0 and 1
+        fillAmount = playerStats.PlayerEnergy / playerStats.MaxEnergy;
+        energySlider.fillAmount = fillAmount; //Updates the energy bar slider fill amount
     }
 
     /// <summary>
@@ -62,7 +73,8 @@ public class PlayerHUD : UdonSharpBehaviour
     /// </summary>
     public void UpdateTick()
     {
-        energyText.text = $"E: {playerStats.PlayerEnergy:F0}";
+        float fillAmount = playerStats.PlayerEnergy / playerStats.MaxEnergy;
+        energySlider.fillAmount = fillAmount; //Updates the energy bar slider fill amount
     }
 
     /// <summary>
@@ -176,8 +188,8 @@ public class PlayerHUD : UdonSharpBehaviour
     /// </summary>
     public void DecreaseEnergy()
     {
-        energyText.color = Color.red;
-		SendCustomEventDelayedSeconds("ResetEnergyColor", 1);
+        energySlider.color = Color.red;
+		SendCustomEventDelayedSeconds("ResetEnergyColor", 0.5f);
     }
 
     /// <summary>
@@ -185,6 +197,6 @@ public class PlayerHUD : UdonSharpBehaviour
     /// </summary>
     public void ResetEnergyColor()
     {
-        energyText.color = Color.white;
+        energySlider.color = Color.yellow;
     }
 }
