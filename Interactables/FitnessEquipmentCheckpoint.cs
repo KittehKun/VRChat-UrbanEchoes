@@ -19,6 +19,7 @@ public class FitnessEquipmentCheckpoint : UdonSharpBehaviour
     private float deactivateTime; //The time limit for the minigame represented in seconds
     private bool isEnabled = false; //Used to check if the checkpoint is currently enabled
     private MeshRenderer meshRender; //The mesh renderer of the checkpoint
+
     [Header("Enabled/Disabled Materials")]
     [SerializeField] private Material enabledCheckpoint;
     [SerializeField] private Material disabledCheckpoint;

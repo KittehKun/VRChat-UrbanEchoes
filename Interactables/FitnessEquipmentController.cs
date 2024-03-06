@@ -90,6 +90,8 @@ public class FitnessEquipmentController : UdonSharpBehaviour
         else
         {
             playerStats.DecreaseEnergy(Random.Range(10, 20));
+            audioSource.clip = whistleSFX; //Plays the whistle SFX
+            audioSource.Play();
         }
 
         ResetMinigame();
