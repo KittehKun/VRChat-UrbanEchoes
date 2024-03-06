@@ -150,7 +150,7 @@ public class JobScript : UdonSharpBehaviour
 		_bonusPay = _basePay * (_jobWave * 0.05) + Random.Range(0f, 1f);
 
 		//Display the bonus notification
-		_playerHUD.DisplayJobBonusNotification(_bonusPay);
+		_playerHUD.UpdateMoneyToAdd(_bonusPay);
 
 		//Add the bonus to the player's money
 		_playerStats.AddMoney(_basePay + _bonusPay);

@@ -16,6 +16,7 @@ public class PlayerHUD : UdonSharpBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI energyText;
     [SerializeField] private TextMeshProUGUI moneyText;
+    [SerializeField] private TextMeshProUGUI moneyToAddText;
 
     [Header("Job Specific Text")]
     [SerializeField] private TextMeshProUGUI jobAcceptNotification; //Displays when a player accepts a job and meets the requirements.
@@ -25,6 +26,7 @@ public class PlayerHUD : UdonSharpBehaviour
     [SerializeField] private TextMeshProUGUI jobTimerText; //Displays the time remaining in the current job wave.
     [SerializeField] private TextMeshProUGUI jobTaskText; //Displays the current job wave number.
     [SerializeField] private TextMeshProUGUI jobTitleText; //Displays the name of the job the player is currently on.
+    [SerializeField] private Transform objectiveDisplay;
 
     [Header("HUD Canvas")]
     [SerializeField] private Transform hudCanvas;
@@ -35,6 +37,8 @@ public class PlayerHUD : UdonSharpBehaviour
     private void Start()
     {
         if (!playerStats) playerStats = GetComponent<PlayerStats>(); //If the playerStats field is not assigned in Unity, script should be on the same GameObject as the PlayerStats component
+        objectiveDisplay.gameObject.SetActive(false);
+        moneyToAddText.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -66,6 +70,18 @@ public class PlayerHUD : UdonSharpBehaviour
     public void UpdateMoney()
     {
         moneyText.text = $"${playerStats.PlayerMoney:F2}"; //Displays with 2 decimal places
+    }
+
+    public void UpdateMoneyToAdd(double amount)
+    {
+        moneyToAddText.gameObject.SetActive(true);
+		moneyToAddText.text = $"+${amount:F2}";
+		SendCustomEventDelayedSeconds("ResetMoneyToAdd", 2);
+	}
+
+    public void ResetMoneyToAdd()
+    {
+        moneyToAddText.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -136,6 +152,9 @@ public class PlayerHUD : UdonSharpBehaviour
 		//Display the job accept notification text for 5 seconds
         jobAcceptNotification.gameObject.SetActive(true);
         SendCustomEventDelayedSeconds("DisableJobAcceptNotification", 5);
+
+        //Enable the objective display
+        objectiveDisplay.gameObject.SetActive(true);
 	}
 
     public void DisplayJobDeclinedNotification()
@@ -147,20 +166,15 @@ public class PlayerHUD : UdonSharpBehaviour
         SendCustomEventDelayedSeconds("DisableJobDeclinedNotification", 5);
 	}
 
-	public void DisplayJobBonusNotification(double bonusAmount)
-    {
-		//Display the job bonus notification text for 5 seconds
-		jobBonusNotification.text = $"You received a bonus of ${bonusAmount:F2}!";
-		jobBonusNotification.gameObject.SetActive(true);
-        SendCustomEventDelayedSeconds("DisableBonusNotification", 5);
-	}
-
     public void DisplayJobFailedNotification()
     {
         jobFailedNotification.gameObject.SetActive(true);
         jobTaskText.gameObject.SetActive(false);
         jobTitleText.text = "Unemployed";
         SendCustomEventDelayedSeconds("DisableJobFailedNotification", 5);
+
+        //Disable the objective display
+        objectiveDisplay.gameObject.SetActive(false);
     }
 
     public void DisableJobFailedNotification()

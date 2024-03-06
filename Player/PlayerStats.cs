@@ -62,6 +62,8 @@ public class PlayerStats : UdonSharpBehaviour
 		PlayerMoney += amount;
 		audioSource.clip = addMoneySFX;
 		audioSource.Play();
+
+		playerHUD.UpdateMoneyToAdd(amount);
 	}
 
 	/// <summary>
