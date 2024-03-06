@@ -16,7 +16,6 @@ public class FitnessEquipmentController : UdonSharpBehaviour
     [SerializeField] private AudioClip levelupSFX; //The sound effect that plays when the player levels up their fitness skill
 
     [Header("Training Minigame")]
-    [SerializeField] private Transform fitnessMinigame; //The minigame for fitness skill training
     [SerializeField] private Transform minigameCheckpoints; //The checkpoints for the fitness skill training minigame used for enabling a random amount | Set in Inspector
     private int checkpointCount; //The number of checkpoints in the minigame
 
@@ -52,9 +51,6 @@ public class FitnessEquipmentController : UdonSharpBehaviour
 
         //Disable the collider to prevent the player from interacting with the equipment during training
         transform.GetComponent<Collider>().enabled = false; //Disable the collider to prevent the player from interacting with the equipment during training
-        
-        //Enable the fitness minigame
-        fitnessMinigame.gameObject.SetActive(true);
 
         //Play the whistle SFX
         audioSource.clip = whistleSFX; //Plays the whistle SFX
@@ -84,7 +80,7 @@ public class FitnessEquipmentController : UdonSharpBehaviour
         }
     }
 
-    private void EndTraining(bool finishedTraining)
+    public void EndTraining(bool finishedTraining)
     {
         if(finishedTraining)
         {
@@ -96,8 +92,6 @@ public class FitnessEquipmentController : UdonSharpBehaviour
             playerStats.DecreaseEnergy(Random.Range(10, 20));
         }
 
-        fitnessMinigame.gameObject.SetActive(false);
-
         ResetMinigame();
     }
 
@@ -106,6 +100,8 @@ public class FitnessEquipmentController : UdonSharpBehaviour
         isTraining = false;
 		minigameTimer = 0;
 		transform.GetComponent<Collider>().enabled = true; //Enable the collider to allow the player to interact with the equipment
+
+        DisableCheckpoints();
     }
 
     public void CompleteCheckpoint()
