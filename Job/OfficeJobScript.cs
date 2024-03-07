@@ -134,7 +134,7 @@ public class OfficeJobScript : UdonSharpBehaviour
         playerStats.OnJob = true;
 
         //Update the player's HUD with the job name
-        playerHUD.UpdateJobTitle(jobName, 1);
+        playerHUD.UpdateJobTitle("Office", 1);
         
         GenerateMathEquation();
     }
