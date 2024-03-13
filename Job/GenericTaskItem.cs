@@ -70,17 +70,7 @@ public class GenericTaskItem : UdonSharpBehaviour
     /// </summary>
     private void DisablePickup()
     {
-        transform.GetComponent<MeshRenderer>().enabled = false;
-        transform.GetComponent<Collider>().enabled = false;
-    }
-
-    /// <summary>
-    /// Reenables the pickup item so that it can be picked up again.
-    /// </summary>
-    private void EnablePickup()
-    {
-        transform.GetComponent<MeshRenderer>().enabled = true;
-        transform.GetComponent<Collider>().enabled = true;
+        transform.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -89,6 +79,5 @@ public class GenericTaskItem : UdonSharpBehaviour
     private void TaskComplete()
     {
         targetJob.SendCustomEvent("CompleteTask");
-        EnablePickup();
     }
 }

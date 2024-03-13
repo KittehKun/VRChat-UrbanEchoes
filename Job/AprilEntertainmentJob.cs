@@ -9,7 +9,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 {
 	//Variables - Set in Unity Inspector depending on the job
 	private readonly string jobName = "Associate"; //The name of the job. Displayed onto the HUD.
-	private readonly double basePay = 10.00; //The base amount of money the player will receive for completing a job wave.
+	private readonly double basePay = 12.50; //The base amount of money the player will receive for completing a job wave.
 	private double taskPay; //The amount of money the player will receive for completing a job task. A random between 0.1 and 1.0 is added to the base pay.
 	private double bonusPay = 0; //The bonus amount the player will receive for completing a job task. This is calculated based on the wave number.
 	[SerializeField] private int[] jobRequirements = new int[5]; //Set in Unity Inspector | The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
@@ -19,6 +19,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	private readonly float waveTimeLimit = 180; //The time limit for each the very first wave. Represented in seconds.
 	private float waveTimer; //The timer used to calculate the time remaining in the wave.
 	private int taskCount = 0; //The number of tasks the player has completed in the current wave/job.
+	private int currentTaskCount = 0;
 
 	[Header("Job Task Items")]
 	[SerializeField] private Transform taskItems; //Set in Unity Inspector | Contains all the cassette tapes that the player must collect to complete the job task.
@@ -103,6 +104,8 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 
 		//Update the player's HUD
 		playerHUD.UpdateJobTitle(jobName, 1);
+		playerHUD.EnableTimerText();
+		playerHUD.DisplayJobAcceptNotification();
 
 		//Generate the task amount and enable the task items based on task amount
 		GenerateTasks();
@@ -114,6 +117,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	private void FailJob()
 	{
 		playerHUD.DisplayJobFailedNotification();
+		PlayJobFailed();
 		ResetJob();
 	}
 
@@ -122,13 +126,19 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	/// </summary>
 	private void ResetJob()
 	{
-		PlayJobFailed();
 		timerStarted = false;
 		waveTimer = waveTimeLimit;
+		currentTaskCount = 0;
+		taskCount = 0;
 
 		//Reenable the job pickup
 		transform.GetComponent<MeshRenderer>().enabled = true;
 		transform.GetComponent<BoxCollider>().enabled = true;
+
+		playerHUD.DisableTimerText();
+
+		//Reset the player's on job status to false
+		playerStats.OnJob = false;
 	}
 
 	/// <summary>
@@ -138,7 +148,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	{
 		//Generate the task amount based on the taskItems children count. Then enable a random amount of children based on the task amount.
 		int totalChildren = taskItems.childCount;
-		int numToActivate = Random.Range(0, totalChildren + 1); // Random number between 0 and totalChildren (inclusive)
+		int numToActivate = Random.Range(1, totalChildren + 1); // Random number between 1 and totalChildren (inclusive)
 
 		// Activate a random subset of children
 		for (int i = 0; i < numToActivate; i++)
@@ -148,6 +158,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		}
 
 		taskCount = numToActivate;
+		playerHUD.UpdateJobTaskCount(0, taskCount);
 	}
 
 	/// <summary>
@@ -155,6 +166,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	/// </summary>
 	public void CompleteTask()
 	{
+		playerHUD.UpdateJobTaskCount(currentTaskCount++, taskCount); //Update the player's HUD (current task count and max task count
 		taskCount--; //Decrease the task count
 		if (taskCount != 0) return;
 
