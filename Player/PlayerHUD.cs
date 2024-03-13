@@ -112,6 +112,11 @@ public class PlayerHUD : UdonSharpBehaviour
         jobTaskText.text = $"Job Tasks: {currentTaskCount}/{maxTaskCount}";
     }
 
+    public void UpdateJobTaskCount(int taskCount)
+    {
+        jobTaskText.text = $"Job Tasks: {taskCount}";
+    }
+
     /// <summary>
     /// Updates the job timer HUD element with the time remaining in the current job wave.
     /// </summary>

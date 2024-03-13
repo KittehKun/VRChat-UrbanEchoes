@@ -128,7 +128,6 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	{
 		timerStarted = false;
 		waveTimer = waveTimeLimit;
-		currentTaskCount = 0;
 		taskCount = 0;
 
 		//Reenable the job pickup
@@ -146,21 +145,17 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	/// </summary>
 	private void GenerateTasks()
 	{
-		//Generate the task amount based on the taskItems children count. Then enable a random amount of children based on the task amount.
-		int totalChildren = taskItems.childCount;
-		int numToActivate = Random.Range(1, totalChildren + 1); // Random number between 1 and totalChildren (inclusive)
+		//Set the amount of tasks the player must complete
+		taskCount = Random.Range(1, taskItems.childCount + 1);
 
-		// Activate a random subset of children
-		for (int i = 0; i < numToActivate; i++)
+		//Randomize the enabled tasks in the array
+		for (int i = 0; i < taskItems.childCount; i++)
 		{
-			int randomChildIndex = Random.Range(0, totalChildren);
-			taskItems.GetChild(randomChildIndex).gameObject.SetActive(true);
-			
-			//TODO: Fix the task count bug it's somehow multiplied by 2 somewhere
-			taskCount++;
+			taskItems.GetChild(i).gameObject.SetActive(i < taskCount);
 		}
 
-		playerHUD.UpdateJobTaskCount(0, taskCount);
+		//Update the player HUD and reset the current task count
+		playerHUD.UpdateJobTaskCount(taskCount);
 	}
 
 	/// <summary>
