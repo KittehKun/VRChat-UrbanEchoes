@@ -33,11 +33,6 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	[Header("Player HUD")]
 	[SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
 
-	private void Start()
-    {
-        
-    }
-
 	private void Update()
 	{
 		if (timerStarted)
