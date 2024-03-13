@@ -145,13 +145,27 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	/// </summary>
 	private void GenerateTasks()
 	{
-		//Set the amount of tasks the player must complete
+		// Create an array to store indices of task items
+		int[] indices = new int[taskItems.childCount];
+		for (int i = 0; i < indices.Length; i++)
+		{
+			indices[i] = i;
+		}
+
+		// Shuffle the array of indices
+		for (int i = 0; i < indices.Length; i++)
+		{
+			int randomIndex = Random.Range(i, indices.Length);
+			(indices[randomIndex], indices[i]) = (indices[i], indices[randomIndex]);
+		}
+
+		// Set the amount of tasks the player must complete
 		taskCount = Random.Range(1, taskItems.childCount + 1);
 
-		//Randomize the enabled tasks in the array
+		// Randomize the enabled tasks using the shuffled indices
 		for (int i = 0; i < taskItems.childCount; i++)
 		{
-			taskItems.GetChild(i).gameObject.SetActive(i < taskCount);
+			taskItems.GetChild(indices[i]).gameObject.SetActive(i < taskCount);
 		}
 
 		//Update the player HUD and reset the current task count
