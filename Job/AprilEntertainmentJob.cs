@@ -14,10 +14,11 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	private double bonusPay = 0; //The bonus amount the player will receive for completing a job task. This is calculated based on the wave number.
 	[SerializeField] private int[] jobRequirements = new int[5]; //Set in Unity Inspector | The array is as follows: [0] = Intelligence, [1] = Fitness, [2] = Cooking, [3] = Creativity, [4] = Charisma
 
-	//Wave Settings
+	//Job & Wave Settings
 	private bool timerStarted = false; //If the wave timer has started, this will be true. If the wave timer has not started, this will be false.
-	private readonly float waveTimeLimit = 300; //The time limit for each the very first wave. Represented in seconds. The time limit decreases by 10% each wave.
+	private readonly float waveTimeLimit = 180; //The time limit for each the very first wave. Represented in seconds.
 	private float waveTimer; //The timer used to calculate the time remaining in the wave.
+	private int taskCount = 0; //The number of tasks the player has completed in the current wave/job.
 
 	[Header("Job Task Items")]
 	[SerializeField] private Transform taskItems; //Set in Unity Inspector | Contains all the cassette tapes that the player must collect to complete the job task.
@@ -102,6 +103,9 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 
 		//Update the player's HUD
 		playerHUD.UpdateJobTitle(jobName, 1);
+
+		//Generate the task amount and enable the task items based on task amount
+		GenerateTasks();
 	}
 
 	/// <summary>
@@ -127,30 +131,47 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		transform.GetComponent<BoxCollider>().enabled = true;
 	}
 
+	/// <summary>
+	/// Generates a random amount of tasks for the player to complete. The GameObjects are then enabled randomly based on the task amount.
+	/// </summary>
+	private void GenerateTasks()
+	{
+		//Generate the task amount based on the taskItems children count. Then enable a random amount of children based on the task amount.
+		int totalChildren = taskItems.childCount;
+		int numToActivate = Random.Range(0, totalChildren + 1); // Random number between 0 and totalChildren (inclusive)
+
+		// Activate a random subset of children
+		for (int i = 0; i < numToActivate; i++)
+		{
+			int randomChildIndex = Random.Range(0, totalChildren);
+			taskItems.GetChild(randomChildIndex).gameObject.SetActive(true);
+		}
+
+		taskCount = numToActivate;
+	}
+
+	/// <summary>
+	/// Completes the job. Adds the task pay and bonus pay to the player's money and decreases the player's energy. Called by SendCustomEvent on the job task item and thus should not have a reference.
+	/// </summary>
 	public void CompleteTask()
 	{
+		taskCount--; //Decrease the task count
+		if (taskCount != 0) return;
+
 		//Play the job complete sound effect
 		PlayJobComplete();
 
-		//Calculate the task pay
-		taskPay = basePay + Random.Range(0.1f, 1.0f);
-
-		//Calculate the bonus pay
-		bonusPay = basePay * 0.1;
-
-		//Calculate the total pay
-		double totalPay = taskPay + bonusPay;
-
 		//Add the task pay and bonus pay to the player's money
-		playerStats.AddMoney(taskPay + bonusPay);
-		playerHUD.UpdateMoney();
-		playerHUD.UpdateMoneyToAdd(totalPay);
+		taskPay = basePay + Random.Range(0.1f, 1.0f);
+		bonusPay = basePay * (1 * 0.1) + Random.Range(0.1f, 1f);
+		double total = taskPay + bonusPay;
+		playerStats.AddMoney(total);
 
 		//Decrease the player's energy
 		playerStats.DecreaseEnergy();
 
-		//Play Job Complete SFX
-		PlayJobComplete();
+		//Update the player's HUD
+		playerHUD.UpdateMoneyToAdd(total);
 
 		//Reset the job
 		ResetJob();

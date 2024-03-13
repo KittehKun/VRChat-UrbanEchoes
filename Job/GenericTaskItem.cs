@@ -21,10 +21,15 @@ public class GenericTaskItem : UdonSharpBehaviour
     [Header("Player HUD")]
     [SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
 
+	private void Start()
+	{
+        transform.gameObject.SetActive(false);
+	}
+
 	/// <summary>
-    /// The entry method for the task item. This method is called when the player interacts with the task item.
-    /// </summary>
-    public override void Interact()
+	/// The entry method for the task item. This method is called when the player interacts with the task item.
+	/// </summary>
+	public override void Interact()
     {
         PickupItem();
     }
@@ -57,6 +62,7 @@ public class GenericTaskItem : UdonSharpBehaviour
         double payBonus = Random.Range(0.01f, 0.5f);
         playerStats.AddMoney(payBonus);
         playerHUD.UpdateMoneyToAdd(payBonus);
+        playerHUD.UpdateMoney();
     }
 
     /// <summary>
@@ -71,17 +77,18 @@ public class GenericTaskItem : UdonSharpBehaviour
     /// <summary>
     /// Reenables the pickup item so that it can be picked up again.
     /// </summary>
-    public void EnablePickup()
+    private void EnablePickup()
     {
         transform.GetComponent<MeshRenderer>().enabled = true;
         transform.GetComponent<Collider>().enabled = true;
     }
 
     /// <summary>
-    /// Sends a custom event to the target job script to notify it that the task has been completed. Target job must have a public method called "TaskCompleted".
+    /// Sends a custom event to the target job script to notify it that the task has been completed. Target job must have a public method called "CompleteTask".
     /// </summary>
     private void TaskComplete()
     {
-        targetJob.SendCustomEvent("TaskCompleted");
+        targetJob.SendCustomEvent("CompleteTask");
+        EnablePickup();
     }
 }
