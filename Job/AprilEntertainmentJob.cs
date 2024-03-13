@@ -155,9 +155,11 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		{
 			int randomChildIndex = Random.Range(0, totalChildren);
 			taskItems.GetChild(randomChildIndex).gameObject.SetActive(true);
+			
+			//TODO: Fix the task count bug it's somehow multiplied by 2 somewhere
+			taskCount++;
 		}
 
-		taskCount = numToActivate;
 		playerHUD.UpdateJobTaskCount(0, taskCount);
 	}
 
@@ -166,9 +168,8 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	/// </summary>
 	public void CompleteTask()
 	{
-		playerHUD.UpdateJobTaskCount(currentTaskCount++, taskCount); //Update the player's HUD (current task count and max task count
 		taskCount--; //Decrease the task count
-		if (taskCount != 0) return;
+		if (taskCount > 0) return;
 
 		//Play the job complete sound effect
 		PlayJobComplete();
