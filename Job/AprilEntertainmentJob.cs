@@ -156,7 +156,9 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		for (int i = 0; i < indices.Length; i++)
 		{
 			int randomIndex = Random.Range(i, indices.Length);
-			(indices[randomIndex], indices[i]) = (indices[i], indices[randomIndex]);
+			int temp = indices[i];
+			indices[i] = indices[randomIndex];
+			indices[randomIndex] = temp;
 		}
 
 		// Set the amount of tasks the player must complete
