@@ -104,6 +104,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		//Update the player's HUD
 		playerHUD.UpdateJobTitle(jobName);
 		playerHUD.EnableTimerText();
+		playerHUD.EnableTaskText();
 		playerHUD.DisplayJobAcceptNotification();
 
 		//Generate the task amount and enable the task items based on task amount
@@ -134,6 +135,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		transform.GetComponent<BoxCollider>().enabled = true;
 
 		playerHUD.DisableTimerText();
+		playerHUD.DisableObjectiveGUI();
 
 		//Reset the player's on job status to false
 		playerStats.OnJob = false;
@@ -190,6 +192,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		bonusPay = basePay * (1 * 0.1) + Random.Range(0.1f, 1f);
 		double total = taskPay + bonusPay;
 		playerStats.AddMoney(total);
+		playerHUD.UpdateMoney();
 
 		//Decrease the player's energy
 		playerStats.DecreaseEnergy();

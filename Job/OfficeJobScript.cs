@@ -9,7 +9,7 @@ using VRC.Udon;
 public class OfficeJobScript : UdonSharpBehaviour
 {
     //Variables - Set in Unity Inspector depnding on the job
-    [SerializeField] private string jobName;
+    [SerializeField] private string jobName = "Office Worker";
     [SerializeField] private double basePay;
     private double taskPay;
     private double bonusPay;
@@ -19,7 +19,7 @@ public class OfficeJobScript : UdonSharpBehaviour
 
     //Wave Settings
     private bool timerStarted = false;
-    private float waveTimeLimit = 150;
+    private float waveTimeLimit = 120;
     private float waveTimer;
 
     [Header("Job Task Items")]
@@ -54,7 +54,6 @@ public class OfficeJobScript : UdonSharpBehaviour
             answerSpawnPointsPos[i] = jobAnswerSpawn.GetChild(i).position;
             answerSpawnPointsRot[i] = jobAnswerSpawn.GetChild(i).eulerAngles;
 		}
-        Debug.Log($"Found {jobAnswerSpawn.childCount} children in JobAnswerSpawns"); //Expected: 3
     }
 
 	private void Update()
@@ -135,7 +134,7 @@ public class OfficeJobScript : UdonSharpBehaviour
         playerStats.OnJob = true;
 
         //Update the player's HUD with the job name
-        playerHUD.UpdateJobTitle("Office", 1);
+        playerHUD.UpdateJobTitle(jobName);
         
         GenerateMathEquation();
     }
