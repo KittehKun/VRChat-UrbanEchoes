@@ -180,6 +180,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	public void CompleteTask()
 	{
 		taskCount--; //Decrease the task count
+		playerHUD.UpdateJobTaskCount(taskCount); //Update the player's HUD
 		if (taskCount > 0) return;
 
 		//Play the job complete sound effect

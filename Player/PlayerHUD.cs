@@ -202,6 +202,16 @@ public class PlayerHUD : UdonSharpBehaviour
         jobAcceptNotification.gameObject.SetActive(false);
     }
 
+    public void DisableObjectiveGUI()
+    {
+        objectiveDisplay.gameObject.SetActive(false);
+    }
+
+    public void EnableObjectiveGUI()
+    {
+        objectiveDisplay.gameObject.SetActive(true);
+    }
+
     /// <summary>
     /// Marks the energy text as red for a short duration to indicate the player has lost energy.
     /// </summary>
