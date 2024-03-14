@@ -161,7 +161,17 @@ public class PlayerHUD : UdonSharpBehaviour
         jobTimerText.gameObject.SetActive(false);
     }
 
-    public void DisplayJobAcceptNotification()
+	public void EnableTaskText()
+	{
+        jobTaskText.gameObject.SetActive(true);
+	}
+
+    public void DisableTaskText()
+    {
+		jobTaskText.gameObject.SetActive(false);
+	}
+
+	public void DisplayJobAcceptNotification()
     {
 		//Display the job accept notification text for 5 seconds
         jobAcceptNotification.gameObject.SetActive(true);

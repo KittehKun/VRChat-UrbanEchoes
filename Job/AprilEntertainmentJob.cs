@@ -8,7 +8,7 @@ using VRC.Udon;
 public class AprilEntertainmentJob : UdonSharpBehaviour
 {
 	//Variables - Set in Unity Inspector depending on the job
-	private readonly string jobName = "Associate"; //The name of the job. Displayed onto the HUD.
+	private readonly string jobName = "Hiereath Associate"; //The name of the job. Displayed onto the HUD.
 	private readonly double basePay = 12.50; //The base amount of money the player will receive for completing a job wave.
 	private double taskPay; //The amount of money the player will receive for completing a job task. A random between 0.1 and 1.0 is added to the base pay.
 	private double bonusPay = 0; //The bonus amount the player will receive for completing a job task. This is calculated based on the wave number.
@@ -19,7 +19,6 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 	private readonly float waveTimeLimit = 180; //The time limit for each the very first wave. Represented in seconds.
 	private float waveTimer; //The timer used to calculate the time remaining in the wave.
 	private int taskCount = 0; //The number of tasks the player has completed in the current wave/job.
-	private int currentTaskCount = 0;
 
 	[Header("Job Task Items")]
 	[SerializeField] private Transform taskItems; //Set in Unity Inspector | Contains all the cassette tapes that the player must collect to complete the job task.
@@ -103,7 +102,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 		playerStats.OnJob = true;
 
 		//Update the player's HUD
-		playerHUD.UpdateJobTitle(jobName, 1);
+		playerHUD.UpdateJobTitle(jobName);
 		playerHUD.EnableTimerText();
 		playerHUD.DisplayJobAcceptNotification();
 
