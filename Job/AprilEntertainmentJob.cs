@@ -197,6 +197,7 @@ public class AprilEntertainmentJob : UdonSharpBehaviour
 
 		//Update the player's HUD
 		playerHUD.UpdateMoneyToAdd(total);
+		playerHUD.DisableObjectiveGUI();
 
 		//Reset the job
 		ResetJob();

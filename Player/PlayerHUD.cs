@@ -101,6 +101,15 @@ public class PlayerHUD : UdonSharpBehaviour
     {
         jobTitleText.text = $"{jobTitle} - Lvl {jobWave}";
     }
+
+    /// <summary>
+    /// Updates the job title HUD element with the current job title.
+    /// </summary>
+    /// <param name="jobTitle"></param>
+    public void UpdateJobTitle(string jobTitle)
+    {
+        jobTitleText.text = jobTitle;
+    }
     
     /// <summary>
     /// Updates the current task count and the maximum task count. This method should be called whenever the player completes a wave or begins a job.
