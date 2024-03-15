@@ -15,6 +15,11 @@ public class LibraryMinigame : UdonSharpBehaviour
 	[Header("Book Items")]
 	[SerializeField] private Transform taskItems; //Set in Unity Inspector | Contains all the books that the player must collect to complete the minigame.
 	private int booksToCollect = 0; //The number of books the player has to collect to complete the minigame.
+
+	[Header("Library SFX")]
+	[SerializeField] private AudioSource librarySFX; //Set in Unity Inspector | The audio source that will play all library audio clips.
+	[SerializeField] private AudioClip libraryCompleteSFX; //Set in Unity Inspector | The sound effect that will play when the player completes the library minigame.
+	[SerializeField] private AudioClip libraryFailedSFX; //Set in Unity Inspector | The sound effect that will play when the player fails the library minigame.
     
     [Header("Player Stats")]
     [SerializeField] PlayerStats playerStats;
@@ -65,6 +70,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 	private void FailMinigame()
 	{
 		ResetMinigame();
+		PlayFailSFX();
 	}
 
 	private void ResetMinigame()
@@ -109,6 +115,32 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Update the player HUD and reset the current task count
 		playerHUD.UpdateJobTaskCount(booksToCollect);
+	}
+
+	private void PlayCompleteSFX()
+	{
+		librarySFX.clip = libraryCompleteSFX;
+		librarySFX.Play();
+	}
+
+	private void PlayFailSFX()
+	{
+		librarySFX.clip = libraryFailedSFX;
+		librarySFX.Play();
+	}
+
+	public void BookCollected()
+	{
+		//Check if the player has collected all the books
+		booksToCollect--;
+		playerHUD.UpdateJobTaskCount(booksToCollect);
+
+		if (booksToCollect <= 0)
+		{
+			//Complete the minigame
+			ResetMinigame();
+			PlayCompleteSFX();
+		}
 	}
 
 	public override void Interact()
