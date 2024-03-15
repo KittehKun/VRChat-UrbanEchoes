@@ -11,6 +11,10 @@ public class LibraryMinigame : UdonSharpBehaviour
     private bool timerStarted = false;
     private readonly float timeLimit = 180;
     private float timer;
+
+	[Header("Book Items")]
+	[SerializeField] private Transform taskItems; //Set in Unity Inspector | Contains all the books that the player must collect to complete the minigame.
+	private int booksToCollect = 0; //The number of books the player has to collect to complete the minigame.
     
     [Header("Player Stats")]
     [SerializeField] PlayerStats playerStats;
@@ -48,6 +52,9 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Set the player's on job status to true
 		playerStats.OnJob = true;
+
+		//Enable the task items
+		EnableTaskItems();
 	}
 
 	private void StopMinigame()
@@ -71,6 +78,37 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Set the player's on job status to false
 		playerStats.OnJob = false;
+	}
+
+	private void EnableTaskItems()
+	{
+		//Enable a random amount of task items based on child count
+		booksToCollect = Random.Range(1, taskItems.childCount + 1);
+
+		//Create an array to store indices of task items
+		int[] indices = new int[taskItems.childCount];
+		for (int i = 0; i < indices.Length; i++)
+		{
+			indices[i] = i;
+		}
+
+		//Shuffle the array of indices
+		for (int i = 0; i < indices.Length; i++)
+		{
+			int randomIndex = Random.Range(i, indices.Length);
+			int temp = indices[i];
+			indices[i] = indices[randomIndex];
+			indices[randomIndex] = temp;
+		}
+
+		//Randomize the enabled tasks using the shuffled indices
+		for (int i = 0; i < taskItems.childCount; i++)
+		{
+			taskItems.GetChild(indices[i]).gameObject.SetActive(i < booksToCollect);
+		}
+
+		//Update the player HUD and reset the current task count
+		playerHUD.UpdateJobTaskCount(booksToCollect);
 	}
 
 	public override void Interact()
