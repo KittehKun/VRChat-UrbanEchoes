@@ -21,6 +21,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 	[SerializeField] private AudioClip libraryStartSFX; //Set in Unity Inspector | The sound effect that will play when the player starts the library minigame.
 	[SerializeField] private AudioClip libraryCompleteSFX; //Set in Unity Inspector | The sound effect that will play when the player completes the library minigame.
 	[SerializeField] private AudioClip libraryFailedSFX; //Set in Unity Inspector | The sound effect that will play when the player fails the library minigame.
+	[SerializeField] private AudioClip bookCollectedSFX; //Set in Unity Inspector | The sound effect that will play when the player collects a book.
     
     [Header("Player Stats")]
     [SerializeField] PlayerStats playerStats;
@@ -141,8 +142,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 	/// </summary>
 	private void PlayStartSFX()
 	{
-		librarySFX.clip = libraryStartSFX;
-		librarySFX.Play();
+		librarySFX.PlayOneShot(libraryStartSFX);
 	}
 
 	/// <summary>
@@ -150,8 +150,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 	/// </summary>
 	private void PlayCompleteSFX()
 	{
-		librarySFX.clip = libraryCompleteSFX;
-		librarySFX.Play();
+		librarySFX.PlayOneShot(libraryCompleteSFX);
 	}
 
 	/// <summary>
@@ -159,17 +158,16 @@ public class LibraryMinigame : UdonSharpBehaviour
 	/// </summary>
 	private void PlayFailSFX()
 	{
-		librarySFX.clip = libraryFailedSFX;
-		librarySFX.Play();
+		librarySFX.PlayOneShot(libraryFailedSFX);
 	}
 
 	/// <summary>
 	/// This method is called by the LibraryPickup script when the player interacts with a book.
 	/// </summary>
 	/// <param name="clip">The clip to be played.</param>
-	public void PlayBookCollectedSFX(AudioClip clip)
+	private void PlayBookCollectedSFX()
 	{
-		librarySFX.PlayOneShot(clip);
+		librarySFX.PlayOneShot(bookCollectedSFX);
 	}
 
 	/// <summary>
@@ -177,6 +175,9 @@ public class LibraryMinigame : UdonSharpBehaviour
 	/// </summary>
 	public void BookCollected()
 	{
+		//Play the book collected SFX
+		PlayBookCollectedSFX();
+
 		//Check if the player has collected all the books
 		booksToCollect--;
 		playerHUD.UpdateJobTaskCount(booksToCollect);
