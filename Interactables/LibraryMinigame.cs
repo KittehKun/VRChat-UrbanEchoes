@@ -7,7 +7,13 @@ using VRC.Udon;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class LibraryMinigame : UdonSharpBehaviour
 {
-    //Timer Settings
+    //Object Float Settings
+	private float INITIAL_Y_POSITION;
+	private readonly float FLOAT_SPEED = 0.5f;
+	private readonly float FLOAT_HEIGHT = 0.1f;
+	private readonly float ROTATION_SPEED = 2.0f;
+
+	//Timer Settings
     private bool timerStarted = false;
     private readonly float timeLimit = 180;
     private float timer;
@@ -29,8 +35,16 @@ public class LibraryMinigame : UdonSharpBehaviour
     [Header("Player HUD")]
     [SerializeField] PlayerHUD playerHUD;
 
+	private void Start()
+	{
+		INITIAL_Y_POSITION = transform.position.y;
+	}
+
 	private void Update()
 	{
+		//Spin and float the object
+		SpinFloatObject();
+
         if (timerStarted)
         {
 			timer -= Time.deltaTime;
@@ -45,6 +59,16 @@ public class LibraryMinigame : UdonSharpBehaviour
 				FailMinigame();
 			}
 		}
+	}
+
+	private void SpinFloatObject()
+	{
+		//Spin the object on the local Z axis
+		transform.Rotate(0, 0, ROTATION_SPEED);
+
+		//Float the object on the Y axis
+		float newY = Mathf.Sin(Time.time * FLOAT_SPEED) * FLOAT_HEIGHT + INITIAL_Y_POSITION;
+		transform.position = new Vector3(transform.position.x, newY, transform.position.z);
 	}
 
 	/// <summary>
