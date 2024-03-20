@@ -101,6 +101,12 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Set the player's on job status to false
 		playerStats.OnJob = false;
+
+		//Disable the task items
+		for (int i = 0; i < taskItems.childCount; i++)
+		{
+			taskItems.GetChild(i).gameObject.SetActive(false);
+		}
 	}
 
 	/// <summary>
