@@ -143,7 +143,8 @@ public class LibraryMinigame : UdonSharpBehaviour
 	private void EnableTaskItems()
 	{
 		//Enable a random amount of task items based on child count
-		booksToCollect = Random.Range(1, taskItems.childCount + 1);
+		int maxBooksToCollect = 15;
+		booksToCollect = Random.Range(1, maxBooksToCollect + 1);
 
 		//Create an array to store indices of task items
 		int[] indices = new int[taskItems.childCount];
