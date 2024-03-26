@@ -127,6 +127,16 @@ public class PlayerHUD : UdonSharpBehaviour
     }
 
     /// <summary>
+    /// Updates the minigame task count HUD element with the current task count and the name of the pickup item.
+    /// </summary>
+    /// <param name="taskCount"></param>
+    /// <param name="pickupName"></param>
+    public void UpdateMinigameTaskCount(int taskCount, string pickupName)
+    {
+        jobTaskText.text = $"{pickupName}: {taskCount}";
+    }
+
+    /// <summary>
     /// Updates the job timer HUD element with the time remaining in the current job wave.
     /// </summary>
     /// <param name="time"></param>

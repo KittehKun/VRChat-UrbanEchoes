@@ -92,6 +92,10 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Play the start SFX
 		PlayStartSFX();
+
+		//Enable the player HUD and update it
+		playerHUD.EnableObjectiveGUI();
+		playerHUD.UpdateJobTitle("Studying");
 	}
 
 	/// <summary>
@@ -165,6 +169,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Update the player HUD and reset the current task count
 		playerHUD.UpdateJobTaskCount(booksToCollect);
+		playerHUD.UpdateMinigameTaskCount(booksToCollect, "Books");
 	}
 
 	/// <summary>
@@ -210,7 +215,7 @@ public class LibraryMinigame : UdonSharpBehaviour
 
 		//Check if the player has collected all the books
 		booksToCollect--;
-		playerHUD.UpdateJobTaskCount(booksToCollect);
+		playerHUD.UpdateMinigameTaskCount(booksToCollect, "Books");
 
 		if (booksToCollect <= 0)
 		{
