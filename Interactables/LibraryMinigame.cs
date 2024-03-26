@@ -135,6 +135,9 @@ public class LibraryMinigame : UdonSharpBehaviour
 		{
 			taskItems.GetChild(i).gameObject.SetActive(false);
 		}
+
+		//Disbale the HUD
+		playerHUD.DisableObjectiveGUI();
 	}
 
 	/// <summary>
