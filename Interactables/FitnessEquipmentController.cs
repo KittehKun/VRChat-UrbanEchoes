@@ -9,6 +9,9 @@ public class FitnessEquipmentController : UdonSharpBehaviour
 {   
     [Header("Player Stats")]
     [SerializeField] private PlayerStats playerStats; //Used for altering the player stats depending on the gym equipment
+
+    [Header("Player HUD")]
+    [SerializeField] private PlayerHUD playerHUD; //Used for updating the player HUD when the player levels up their fitness skill
     
     [Header("Audio SFX")]
     [SerializeField] private AudioSource audioSource; //Used for playing the sound of the gym equipment
@@ -29,6 +32,10 @@ public class FitnessEquipmentController : UdonSharpBehaviour
         {
 			minigameTimer += Time.deltaTime;
 
+            //Update the player HUD with the minigame timer
+            playerHUD.UpdateTimer(minigameTimer);
+
+            //Check if the player has reached the time limit
             if (minigameTimer >= timeLimit)
             {
                 EndTraining(false);
@@ -69,6 +76,10 @@ public class FitnessEquipmentController : UdonSharpBehaviour
         {
 			minigameCheckpoints.GetChild(i).gameObject.SetActive(i < checkpointCount);
 		}
+
+        //Enable and update the Player HUD
+        playerHUD.EnableObjectiveGUI();
+        playerHUD.UpdateMinigameTaskCount(checkpointCount, "Checkpoints");
     }
 
     private void DisableCheckpoints()
@@ -104,6 +115,8 @@ public class FitnessEquipmentController : UdonSharpBehaviour
 		transform.GetComponent<Collider>().enabled = true; //Enable the collider to allow the player to interact with the equipment
 
         DisableCheckpoints();
+
+        playerHUD.DisableObjectiveGUI();
     }
 
     public void CompleteCheckpoint()
