@@ -15,7 +15,7 @@ public class CookingJob : UdonSharpBehaviour
 	[Header("Cooking Stages")]
 	[SerializeField] private Transform ingredientItems; // Set in Unity Inspector | Contains all the ingredients that the player must collect for cooking.
 	[SerializeField] private Transform possibleIngredientPos; // Set in Unity Inspector | Contains all the possible positions where the ingredients can spawn.
-	[SerializeField] private Transform cookingStages; // Set in Unity Inspector | Contains all the cooking stages that the player must complete to finish the minigame.
+	[SerializeField] private Transform cookingStages; // Set in Unity Inspector | Contains all the cooking stages that the player must complete to finish the minigame. 
 
 	[Header("Cooking SFX")]
 	[SerializeField] private AudioSource cookingSFX; // Set in Unity Inspector | The audio source that will play all cooking-related audio clips.
