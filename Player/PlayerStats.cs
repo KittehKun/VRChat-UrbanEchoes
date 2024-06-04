@@ -21,17 +21,17 @@ public class PlayerStats : UdonSharpBehaviour
 	public int PlayerIntelligence { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's intelligence skill.
 	public int PlayerAthleticism { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's athleticism skill.
 	public int PlayerFinesse { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's finesse skill.
-	public bool OnJob { get; set; } = false; //If the player is currently on a job, this will be true. If the player is not on a job, this will be false.
+	public bool OnActivity { get; set; } = false; //If the player is currently on a job, this will be true. If the player is not on a job, this will be false.
 
-	//HUD Elements
-	[SerializeField] private PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
-
-	//Player AAudio
+	//TODO: Add HUD update functionality when ready.
+	//HUD Variables
+	//public PlayerHUD playerHUD; //Assigned in Unity | PlayerHUD is separate from this script and is used to update the player's HUD.
+	
+	//Player Audio
 	[SerializeField] private PlayerAudio playerAudio; //Assigned in Unity | PlayerAudio is separate from this script and is used to play audio on the player.
 
 	private void Start()
 	{
-		playerHUD.UpdateHUD();
 		PlayerMoney = 20.0; //Start the player with $20.
 	}
 
@@ -60,7 +60,6 @@ public class PlayerStats : UdonSharpBehaviour
 	public void AddMoney(double amount)
 	{
 		PlayerMoney += amount;
-		playerHUD.UpdateMoneyToAdd(amount);
 
 		// Play the money sound
 		playerAudio.PlayMoneySound();
@@ -103,7 +102,6 @@ public class PlayerStats : UdonSharpBehaviour
 	{
 		if(PlayerEnergy > 0)
 		PlayerEnergy -= ENERGY_TICK;
-		playerHUD.UpdateTick();
 	}
 
 	/// <summary>
@@ -114,7 +112,6 @@ public class PlayerStats : UdonSharpBehaviour
         if (PlayerEnergy != 0)
         {
 			PlayerEnergy -= Random.Range(0.1f, 1f);
-			playerHUD.DecreaseEnergy();
         }
     }
 
@@ -127,7 +124,6 @@ public class PlayerStats : UdonSharpBehaviour
 		if (PlayerEnergy != 0)
 		{
 			PlayerEnergy -= amount;
-			playerHUD.DecreaseEnergy();
 		}
 	}
 
@@ -141,7 +137,6 @@ public class PlayerStats : UdonSharpBehaviour
 		if (roll <= PlayerIntelligence)
 		{
 			PlayerIntelligence++;
-			playerHUD.UpdateHUD();
 
 			playerAudio.PlayLevelSFX();
 
@@ -161,7 +156,6 @@ public class PlayerStats : UdonSharpBehaviour
 		if (roll <= PlayerAthleticism)
 		{
 			PlayerAthleticism++;
-			playerHUD.UpdateHUD();
 
 			playerAudio.PlayLevelSFX();
 
@@ -181,7 +175,6 @@ public class PlayerStats : UdonSharpBehaviour
 		if (roll <= PlayerFinesse)
 		{
 			PlayerFinesse++;
-			playerHUD.UpdateHUD();
 
 			playerAudio.PlayLevelSFX();
 
