@@ -17,6 +17,7 @@ public class PlayerStats : UdonSharpBehaviour
 	public double PlayerMoney { get; private set; } = 0; //The amount of money the player has. Can be increased by doing activities.
 	public float PlayerEnergy { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player will lose health over time.
 	public int MaxEnergy { get; } = 100; //The maximum energy the player can have.
+	private readonly int SKILL_MAX = 10; //Denotes the maximum skill level a player can have.
 	public int PlayerIntelligence { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's intelligence skill.
 	public int PlayerAthleticism { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's athleticism skill.
 	public int PlayerFinesse { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's finesse skill.
@@ -31,6 +32,7 @@ public class PlayerStats : UdonSharpBehaviour
 	private void Start()
 	{
 		playerHUD.UpdateHUD();
+		PlayerMoney = 20.0; //Start the player with $20.
 	}
 
 	private void Update()
@@ -127,6 +129,66 @@ public class PlayerStats : UdonSharpBehaviour
 			PlayerEnergy -= amount;
 			playerHUD.DecreaseEnergy();
 		}
+	}
+
+	/// <summary>
+	/// Chance roll for the player's intelligence to increase. Called when the player completes an activity to level intelligence such as the Library minigame.
+	/// </summary>
+	public void RollIntelligenceIncrease()
+	{
+		//Chance roll is based off the player's current intelligence. The higher the intelligence, the lower the chance.
+		int roll = Random.Range(1, SKILL_MAX);
+		if (roll <= PlayerIntelligence)
+		{
+			PlayerIntelligence++;
+			playerHUD.UpdateHUD();
+
+			playerAudio.PlayLevelSFX();
+
+			return;
+		}
+
+		Debug.Log($"The player's Intelligence skill was not upgraded. Rolled a {roll}");
+	}
+
+	/// <summary>
+	/// Chance roll for the player's athleticism to increase. Called when the player completes an activity to level athleticism such as the Gym minigame.
+	/// </summary>
+	public void RollAthleticismIncrease()
+	{
+		//Chance roll is based off the player's current athleticism. The higher the athleticism, the lower the chance.
+		int roll = Random.Range(1, SKILL_MAX);
+		if (roll <= PlayerAthleticism)
+		{
+			PlayerAthleticism++;
+			playerHUD.UpdateHUD();
+
+			playerAudio.PlayLevelSFX();
+
+			return;
+		}
+
+		Debug.Log($"The player's Athleticism skill was not upgraded. Rolled a {roll}");
+	}
+
+	/// <summary>
+	/// Chance roll for the player's finesse to increase. Called when the player completes an activity to level finesse such as the Casino minigame.
+	/// </summary>
+	public void RollFinesseIncrease()
+	{
+		//Chance roll is based off the player's current finesse. The higher the finesse, the lower the chance.
+		int roll = Random.Range(1, SKILL_MAX);
+		if (roll <= PlayerFinesse)
+		{
+			PlayerFinesse++;
+			playerHUD.UpdateHUD();
+
+			playerAudio.PlayLevelSFX();
+
+			return;
+		}
+
+		Debug.Log($"The player's Finesse skill was not upgraded. Rolled a {roll}");
 	}
 
 }

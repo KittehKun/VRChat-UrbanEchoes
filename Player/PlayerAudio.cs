@@ -58,15 +58,30 @@ public class PlayerAudio : UdonSharpBehaviour
 		}
 	}
 
+    /// <summary>
+    /// Plays a footstep sound based on the player's movement.
+    /// </summary>
     private void PlayFootstep()
     {
 		//Play a footstep sound
 		PLAYER_AUDIO.PlayOneShot(footstepSounds[Random.Range(0, footstepSounds.Length)]);
     }
 
+    /// <summary>
+    /// Plays the generic money sound.
+    /// </summary>
     public void PlayMoneySound()
     {
         //Play the money sound
 		PLAYER_AUDIO.PlayOneShot(moneySound);
+    }
+
+    /// <summary>
+    /// Plays the generic level up sound.
+    /// </summary>
+    public void PlayLevelSFX()
+    {
+        //Play the level up sound
+        PLAYER_AUDIO.PlayOneShot(levelUpSFX);
     }
 }
