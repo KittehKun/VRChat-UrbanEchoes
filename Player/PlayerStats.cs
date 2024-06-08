@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerStats : UdonSharpBehaviour
 {
 	//Global Variables
-	private readonly float ENERGY_TICK = 0.1f; //The amount of energy to remove every tick.
+	private readonly float ENERGY_TICK = 0.1f; //The amount of energy to remove every tick. | Represented in seconds.
+	private readonly float HUNGER_TICK = 0.01f; //The amount of hunger to remove every tick. | Represented in seconds.
 
 	//Tick Variables
 	private readonly float tickInterval = 2f; //The timer used to determine when to remove energy and sleep. Represented in seconds.
@@ -15,8 +16,9 @@ public class PlayerStats : UdonSharpBehaviour
 	public int PlayerHealth { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player respawns at the hospital and loses some money.
 	public int MaxHealth { get; } = 100; //The maximum health the player can have.
 	public double PlayerMoney { get; private set; } = 0; //The amount of money the player has. Can be increased by doing activities.
-	public float PlayerEnergy { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player will lose health over time.
-	public int MaxEnergy { get; } = 100; //The maximum energy the player can have.
+	public float PlayerEnergy { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player will lose hunger over time.
+	public float PlayerHunger { get; private set; } = 100; //Ranges from 0 to 100. If it reaches 0, the player will lose hunger over time.
+	private readonly int ENERGY_MAX = 100; //Denotes the maximum energy the player can have.
 	private readonly int SKILL_MAX = 10; //Denotes the maximum skill level a player can have.
 	public int PlayerIntelligence { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's intelligence skill.
 	public int PlayerAthleticism { get; private set; } = 0; //Ranges from 0 to 10. Represents the player's athleticism skill.
@@ -100,8 +102,11 @@ public class PlayerStats : UdonSharpBehaviour
 	/// </summary>
 	private void NeedsTick()
 	{
-		if(PlayerEnergy > 0)
-		PlayerEnergy -= ENERGY_TICK;
+		if(PlayerEnergy > 0) PlayerEnergy -= ENERGY_TICK;
+		if(PlayerHunger > 0) PlayerHunger -= HUNGER_TICK;
+
+		Debug.Log($"Player Energy at: {PlayerEnergy:0}");
+		Debug.Log($"Player Hunger at: {PlayerHunger:0}");
 	}
 
 	/// <summary>
@@ -125,6 +130,14 @@ public class PlayerStats : UdonSharpBehaviour
 		{
 			PlayerEnergy -= amount;
 		}
+	}
+
+	/// <summary>
+	/// Resets the player's energy back to full. Ideally used when the player respawns at the hospital or uses a bed to sleep in.
+	/// </summary>
+	public void ResetEnergy()
+	{
+		PlayerEnergy = ENERGY_MAX;
 	}
 
 	/// <summary>
