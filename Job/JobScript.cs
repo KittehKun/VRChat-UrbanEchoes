@@ -9,6 +9,8 @@ public class JobScript : UdonSharpBehaviour
 {
     [SerializeField] private double baseReward; //Assigned in Unity based on Job | Awarded to the player for completing the job minigame.
     [SerializeField] private PlayerStats playerStats; //Assigned in Unity | PlayerStats is separate from this script and is used to add money and drain energy from the player.
+
+    [SerializeField] private Transform minigame; //Assigned in Unity | The minigame GameObject that will be enabled when the player starts the job.
     
     void Start()
     {
@@ -49,6 +51,18 @@ public class JobScript : UdonSharpBehaviour
         //This method will be called when the player completes the job minigame.
 		AddMoney();
 		playerStats.DecreaseEnergy(CalculateEnergyDrain());
+    }
+
+    /// <summary>
+    /// Stats the job by enabling the player's OnActivity status as well as enabling minigame mechanics based on the job. All minigames will be held within a Minigame GameObject which SHOULD be a child of the JobScript's GameObject.
+    /// </summary>
+    public void StartJob()
+    {
+        //Enable OnActivity status
+        playerStats.OnActivity = true;
+
+        //Enable the minigame GameObject
+        minigame.gameObject.SetActive(true);
     }
         
 }
