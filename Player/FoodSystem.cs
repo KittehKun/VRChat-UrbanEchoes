@@ -9,7 +9,7 @@ public class FoodSystem : UdonSharpBehaviour
 {
 	//Player Stats Reference
 	private PlayerStats playerStats; //Reference to the PlayerStats script.
-	
+
 	//Global Variables
 	private readonly float HUNGER_TICK = 0.1f; //The amount of hunger to remove every tick.
 
@@ -60,6 +60,36 @@ public class FoodSystem : UdonSharpBehaviour
 
 		// Check if the player's hunger has reached 0. If so, damage the player.
 		if (PlayerHunger <= 0) playerStats.RemoveHealth(1);
+	}
+
+	/// <summary>
+	/// Adds hunger to the player based on the food tier of the food item.
+	/// </summary>
+	/// <param name="foodTier">The specific type of food tier ranging from 1-5</param>
+	public void RestoreHunger(int foodTier)
+	{
+		switch (foodTier)
+		{
+			case (int)FoodTier.Snack:
+				PlayerHunger += 10;
+				break;
+			case (int)FoodTier.LightMeal:
+				PlayerHunger += 20;
+				break;
+			case (int)FoodTier.NormalMeal:
+				PlayerHunger += 30;
+				break;
+			case (int)FoodTier.Feast:
+				PlayerHunger += 40;
+				break;
+			case (int)FoodTier.THEBIGLOAD:
+				PlayerHunger += 50;
+				break;
+			default:
+				Debug.LogError("[FOOD SYSTEM]: Invalid food tier value!");
+				PlayerHunger += 0;
+				break;
+		}
 	}
 
 	/// <summary>
