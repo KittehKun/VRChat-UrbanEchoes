@@ -21,7 +21,7 @@ public class FoodItem : UdonSharpBehaviour
     }
 
     /// <summary>
-    /// Method called when the player interacts with the food item with it being held.
+    /// Method called when the player interacts with the food item with it being held and interacted with.
     /// </summary>
     public override void Interact()
     {
