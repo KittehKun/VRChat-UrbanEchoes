@@ -19,16 +19,24 @@ public class PlayerStats : UdonSharpBehaviour
     //FIELDS
     [SerializeField] private bool DEBUG_MODE = false; //Whether or not to print debug messages.
 
+    // PLAYER HEALTH STATS
     private float _playerHealth = 100; //The amount of player health
     private int _playerMaxHealth = 100; //The maximum amount of player health.
     private float _passiveHealthRegenRate = 0.2f; //The amount of health a player will passively regenerate.
     private float _passiveHealthRegenTimer = BASE_HEALTH_REGEN_TIMER;
     private double _playerMoney = 20.00; //The amount of player money. Players start with $20 and must earn more through activities.
 
+    // PLAYER NUTRITION & ENERGY STATS
     private float _playerNutrition = 100.0f; //The amount of player nutrition. Players start with 100 and must eat to avoid debuffs. Debuffs are given based on thresholds. Thresholds are as follows. 80, 60, 40, 20, 0 (check game documentation for debuff specifices.)
     private float _nutritionTimer = NUTRITION_TIMER; //Represents how long the timer is in seconds.
     private float _playerEnergy = 100.0f; //The amount of energy a player has. Players start with 100 and must eat to avoid debuffs. Debuffs are given based on thresholds. Thresholds are as follows. 80, 60, 40, 20, 0 (check game documentation for debuff specifices.)
     private float _energyTimer = ENERGY_TIMER; //Represents how long the timer is in seconds.
+
+    // PLAYER LEVEL STATS
+    private int _playerLevel = 1; //The player's level. The player starts at level 1.
+    private int _playerXP = 0; //The player's experience points. The player starts with 0 experience points.
+    private int _xpToNextLevel = 100; //The amount of experience points required to reach the next level. Increases by 100 every level.
+    private const int BASE_XP_TO_NEXT_LEVEL = 100;
 
     //PROPERTIES
     /// <summary>
@@ -80,9 +88,9 @@ public class PlayerStats : UdonSharpBehaviour
         if (_playerHealth < _playerMaxHealth)
         {
             _playerHealth += _passiveHealthRegenRate; //Regenerate the player's health by the regen rate.
-            
+
         }
-        else if(_playerHealth > _playerMaxHealth) //Prevents the player from having more than their max health.
+        else if (_playerHealth > _playerMaxHealth) //Prevents the player from having more than their max health.
         {
             _playerHealth = _playerMaxHealth;
         }
@@ -143,6 +151,33 @@ public class PlayerStats : UdonSharpBehaviour
 
         //Reset the timer.
         _energyTimer = ENERGY_TIMER;
+    }
+
+    /// <summary>
+    /// Adds experience points to the player. If the player gains enough XP to level up, calls LevelUp() if XP threshold is met.
+    /// </summary>
+    /// <param name="amount">The amount of experience points to add.</param>
+    public void AddXP(int amount)
+    {
+        if(DEBUG_MODE) { Debug.Log("Player XP: " + _playerXP.ToString("0.##")); }
+
+        _playerXP += amount;
+        if (_playerXP >= _xpToNextLevel)
+        {
+            LevelUp();
+        }
+    }
+
+    /// <summary>
+    /// Increases the player's level by 1 and resets the player's XP to 0.
+    /// </summary>
+    private void LevelUp()
+    {
+        if(DEBUG_MODE) { Debug.Log("Player Level: " + _playerLevel.ToString("0.##")); }
+
+        _playerXP = 0; // Resets the player's XP to 0.
+        _playerLevel++; // Increases the player's level by 1.
+        _xpToNextLevel = _playerLevel * BASE_XP_TO_NEXT_LEVEL; // Sets the player's XP to the next level.
     }
 }
 
