@@ -5,7 +5,7 @@ using VRC.SDKBase;
 using VRC.Udon;
 
 /// <summary>
-/// This class handles the player's health, money, nutrition, energy, debuffs, and other related stats for the player.
+/// This unique class handles the player's health, money, nutrition, energy, debuffs, and other related stats for the player. Only one instance of this class should exist in the scene.
 /// </summary>
 public class PlayerStats : UdonSharpBehaviour
 {

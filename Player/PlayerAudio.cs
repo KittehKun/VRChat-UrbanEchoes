@@ -4,6 +4,9 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
+/// <summary>
+/// This unique class handles all the player's audio. Only one instance of this class should exist in the scene.
+/// </summary>
 public class PlayerAudio : UdonSharpBehaviour
 {
     [Header("Player Audio Source")]
