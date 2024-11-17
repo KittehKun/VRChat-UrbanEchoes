@@ -7,6 +7,7 @@ using VRC.Udon;
 /// <summary>
 /// This unique class handles all the player's audio. Only one instance of this class should exist in the scene.
 /// </summary>
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class PlayerAudio : UdonSharpBehaviour
 {
     [Header("Player Audio Source")]
@@ -15,11 +16,11 @@ public class PlayerAudio : UdonSharpBehaviour
     [Header("Footstep SFX")]
     [SerializeField] private AudioClip[] _footstepSFX;
     private float _lastFootstepTime = 0; //Measured in seconds. Used to determine when to play footstep sound.
-    private const float FOOTSTEP_INTERVAL = 0.15f;
+    private const float FOOTSTEP_INTERVAL = 0.5f;
     
     [Header("Jump SFX")]
     [SerializeField] private AudioClip _jumpSFX;
-    private float _lastJumpTime = 0; //Measured in seconds. Used to determine when to play jump sound.
+    private bool inAir = false;
     
     void Start()
     {
@@ -56,6 +57,24 @@ public class PlayerAudio : UdonSharpBehaviour
 
     private void PlayJumpSound()
     {
+        if(!inAir)
+        {
+            _playerAudioSource.PlayOneShot(_jumpSFX);
+            inAir = true;
+        }
+    }
+
+    public override void InputJump(bool jumpPressed, VRC.Udon.Common.UdonInputEventArgs args)
+    {
+        Debug.Log("Jump Pressed: " + jumpPressed);
         
+        if(jumpPressed && !inAir)
+        {
+            PlayJumpSound();
+        }
+        else if(!jumpPressed && Networking.LocalPlayer.IsPlayerGrounded() && inAir)
+        {
+            inAir = false;
+        }
     }
 }
