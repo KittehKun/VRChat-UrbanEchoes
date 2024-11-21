@@ -1,4 +1,5 @@
 ﻿
+using TMPro;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -20,6 +21,9 @@ public class PurchaseProperty : UdonSharpBehaviour
     [Tooltip("0 = Apartment, 1 = House | TODO: Add businesses")]
     [SerializeField] private int _propertyType; // 0 = Apartment, 1 = House | TODO: Add businesses
     [SerializeField] private double _propertyPrice;
+    [SerializeField] private TextMeshProUGUI _propertyPriceText;
+
+    private VRCPlayerApi _localPlayer;
 
     void Start()
     {
@@ -30,6 +34,19 @@ public class PurchaseProperty : UdonSharpBehaviour
         }
 
         if (_propertyPrice == 0) Debug.LogWarning("PurchaseProperty: No property price set. Please assign a value to the _propertyPrice field. Otherwise, this property is assumed to be free.");
+
+        _propertyPriceText.text = $"${_propertyPrice:0.##}";
+
+        _localPlayer = Networking.LocalPlayer;
+    }
+
+    private void Update()
+    {
+        // Face the property price text towards the player only rotating the x-axis. | Current implementation works BUT rotation is backwards on the x-axis. TODO: Fix
+        Vector3 direction = _localPlayer.GetPosition() - _propertyPriceText.transform.position;
+        direction.y = 0; // ignore y-axis
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        _propertyPriceText.transform.rotation = rotation;
     }
 
     /// <summary>
@@ -72,6 +89,6 @@ public class PurchaseProperty : UdonSharpBehaviour
 
     private void OnValidate()
     {
-        if(this.gameObject.GetComponent<Collider>() == null) Debug.LogWarning("PurchaseProperty: No collider found. Please assign a collider to the GameObject otherwise this object will be unable to be interacted with.");
+        if (this.gameObject.GetComponent<Collider>() == null) Debug.LogWarning("PurchaseProperty: No collider found. Please assign a collider to the GameObject otherwise this object will be unable to be interacted with.");
     }
 }
