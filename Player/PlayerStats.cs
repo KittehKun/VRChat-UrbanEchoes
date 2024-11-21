@@ -24,7 +24,7 @@ public class PlayerStats : UdonSharpBehaviour
     private int _playerMaxHealth = 100; //The maximum amount of player health.
     private float _passiveHealthRegenRate = 0.2f; //The amount of health a player will passively regenerate.
     private float _passiveHealthRegenTimer = BASE_HEALTH_REGEN_TIMER;
-    private double _playerMoney = 20.00; //The amount of player money. Players start with $20 and must earn more through activities.
+    [SerializeField] private double _playerMoney = 20.00; //The amount of player money. Players start with $20 and must earn more through activities.
 
     // PLAYER NUTRITION & ENERGY STATS
     private float _playerNutrition = 100.0f; //The amount of player nutrition. Players start with 100 and must eat to avoid debuffs. Debuffs are given based on thresholds. Thresholds are as follows. 80, 60, 40, 20, 0 (check game documentation for debuff specifices.)
@@ -166,6 +166,16 @@ public class PlayerStats : UdonSharpBehaviour
         {
             LevelUp();
         }
+    }
+
+    public void AddMoney(double amount)
+    {
+        _playerMoney += amount;
+    }
+
+    public void SubtractMoney(double amount)
+    {
+        _playerMoney -= amount;
     }
 
     /// <summary>
