@@ -46,7 +46,7 @@ public class PurchaseProperty : UdonSharpBehaviour
         Vector3 direction = _localPlayer.GetPosition() - _propertyPriceText.transform.position;
         direction.y = 0; // ignore y-axis
         Quaternion rotation = Quaternion.LookRotation(direction);
-        _propertyPriceText.transform.rotation = rotation;
+        _propertyPriceText.transform.transform.rotation = rotation; // Rotate the Canvas | Text object must be a direct child of the Canvas
     }
 
     /// <summary>

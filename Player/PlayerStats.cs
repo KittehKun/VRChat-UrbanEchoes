@@ -38,6 +38,9 @@ public class PlayerStats : UdonSharpBehaviour
     private int _xpToNextLevel = 100; //The amount of experience points required to reach the next level. Increases by 100 every level.
     private const int BASE_XP_TO_NEXT_LEVEL = 100;
 
+    // PLAYER BOOLEANS
+    private bool _activeActivity = false; //Whether or not the player is currently on a mission/job/activity.
+
     //PROPERTIES
     /// <summary>
     /// The player's current health. Can be set or retrieved at any time.
@@ -62,6 +65,12 @@ public class PlayerStats : UdonSharpBehaviour
     /// </summary>
     /// <value>The player's current energy value.</value>
     public float PlayerEnergy { get { return _playerEnergy; } }
+
+    /// <summary>
+    /// The player's current mission status.
+    /// </summary>
+    /// <value>Their current activity status.</value>
+    public bool ActiveActivity { get { return _activeActivity; } set { _activeActivity = value; } }
 
     //Methods
     private void Start()
