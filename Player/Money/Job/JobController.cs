@@ -16,6 +16,11 @@ public class JobController : UdonSharpBehaviour
     [SerializeField]
     protected PlayerStats _playerStats;
 
+    [Header("Job Audio Reference")]
+    [Tooltip("The JobAudio component that this script is attached to. This is used to play audio when the player interacts with the job GameObject.")]
+    [SerializeField]
+    protected JobAudio _jobAudio;
+
     [Header("Job Container Reference")]
     [Tooltip("The job container GameObject that this script is attached to. This is used to activate the job container GameObject when the player interacts with the job GameObject.")]
     [SerializeField]
@@ -25,11 +30,11 @@ public class JobController : UdonSharpBehaviour
     private VRCPlayerApi _localPlayer;
 
     [Header("Job Details")]
-    [SerializeField] protected string _jobName;
-    [SerializeField] protected string _jobDescription;
-    [SerializeField] protected int _jobReward;
-    [SerializeField] protected float _jobXPCompletion;
-    [SerializeField] protected TextMeshProUGUI _jobFloatText;
+    [SerializeField] protected string _jobName; // The name of the job that appears for the job.
+    [SerializeField] protected string _jobDescription; // The description of the job that appears for the job.
+    [SerializeField] protected int _jobReward; // The amount of money to add to the player when the job is completed.
+    [SerializeField] protected int _jobXPCompletion; // The amount of experience points to add to the player when the job is completed.
+    [SerializeField] protected TextMeshProUGUI _jobFloatText; // The text that floats above the job GameObject.
     
     [Header("Job Status")]
     protected float _jobTimer; // Represents the time remaining for the job. All jobs must be completed in a certain amount of time to prevent a player from staying in a job for too long. This job timer will be reset once a player completes the job or an important objective.
@@ -45,6 +50,9 @@ public class JobController : UdonSharpBehaviour
         RotateAndFaceText();
     }
 
+        /// <summary>
+        /// Rotates the job float text towards the player's position and updates its rotation every frame. The job float text is rotated on the x-axis only.
+        /// </summary>
     private void RotateAndFaceText()
     {
         // Face the property price text towards the player only rotating the x-axis. | Current implementation works BUT rotation is backwards on the x-axis. TODO: Fix
@@ -57,10 +65,25 @@ public class JobController : UdonSharpBehaviour
     protected void ActivateJob()
     {
         Debug.Log($"{_jobName} has been interacted with.");
+        
         if(_playerStats.ActiveActivity) return;
 
         _playerStats.ActiveActivity = true;
-        _jobContainer.SetActive(true);
+
+        //_jobContainer.SetActive(true);
+
+        _jobAudio.PlayJobAcceptedSFX();
+    }
+
+    protected void CompleteJob()
+    {
+        _playerStats.AddMoney(_jobReward);
+        _playerStats.AddXP(_jobXPCompletion);
+        _playerStats.ActiveActivity = false;
+
+        //_jobContainer.SetActive(false);
+
+        _jobAudio.PlayJobAcceptedSFX();
     }
 
     /// <summary>
