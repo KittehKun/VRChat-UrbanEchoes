@@ -13,15 +13,15 @@ public class PlayerBlindingSphere : UdonSharpBehaviour
     [SerializeField] private Animator _sphereAnimator;
 
     private VRCPlayerApi _localPlayer;
-    private MeshRenderer _meshRenderer;
+    [SerializeField] private MeshRenderer _meshRenderer;
 
 
     private void Start()
     {
         _localPlayer = Networking.LocalPlayer;
-        _meshRenderer = GetComponent<MeshRenderer>();
 
         if (!_sphereAnimator) _sphereAnimator = GetComponent<Animator>();
+        if (!_meshRenderer) _meshRenderer = GetComponent<MeshRenderer>();
 
         // Disable the blinding sphere by default.
         DisableBlindingSphere();

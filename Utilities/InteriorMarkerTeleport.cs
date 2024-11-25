@@ -16,11 +16,14 @@ public class InteriorMarkerTeleport : TeleportPlayer
     [SerializeField] private bool _blindPlayer = false; // By default, this value will be false unless specified in the inspector.
     [SerializeField] private PlayerBlindingSphere _playerBlindingSphere;
 
+    [SerializeField] private PlayerAudio _playerAudio;
+
     private const float TELEPORT_TIMER = 1f; // The amount of time it takes before a teleport is initiated.
     private const float MARKER_COOLDOWN_TIMER = 1.5f; // The amount of time it takes before the marker can teleport again.
     private float _teleportTimer = 0.0f;
     private float _markerCooldownTimer = 0.0f;
     private bool _isTeleporting = false;
+    private bool _hasTeleported = false;
     private bool _markerCooldown = false; // Used to prevent the marker from teleporting back into the interior/exterior space. Begins a countdown when this bool is activated.
 
     public override void Start()
@@ -41,9 +44,10 @@ public class InteriorMarkerTeleport : TeleportPlayer
         if (_isTeleporting)
         {
             _teleportTimer += Time.deltaTime;
-            if (_teleportTimer >= TELEPORT_TIMER)
+            if (_teleportTimer >= TELEPORT_TIMER && !_hasTeleported)
             {
                 Teleport();
+                _hasTeleported = true;
             }
             if (_teleportTimer >= TELEPORT_TIMER / 2f && _teleportTimer < TELEPORT_TIMER && _blindPlayer)
             {
@@ -79,6 +83,7 @@ public class InteriorMarkerTeleport : TeleportPlayer
         Debug.Log($"{player.displayName} has exited an interior marker collider. Cancelling teleport.");
 
         _isTeleporting = false;
+        _hasTeleported = false;
         _teleportTimer = 0.0f;
     }
 
@@ -88,6 +93,8 @@ public class InteriorMarkerTeleport : TeleportPlayer
         _markerToDisable.gameObject.SetActive(false); // Disables the interior/exterior marker and starts the cooldown timer.
         _markerCooldown = true;
         _markerCooldownTimer = 0.0f;
+
+        _playerAudio.PlayBuildingTransitionSound();
     }
 
 }

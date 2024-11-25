@@ -22,6 +22,9 @@ public class PlayerAudio : UdonSharpBehaviour
     [SerializeField] private AudioClip _jumpSFX;
     private bool inAir = false;
 
+    [Header("Building Transition SFX")]
+    [SerializeField] private AudioClip _buildingTransitionSFX;
+
     void Start()
     {
         BeginPrecheck();
@@ -59,6 +62,11 @@ public class PlayerAudio : UdonSharpBehaviour
     private void PlayJumpSound()
     {
         _playerAudioSource.PlayOneShot(_jumpSFX);
+    }
+
+    public void PlayBuildingTransitionSound()
+    {
+        _playerAudioSource.PlayOneShot(_buildingTransitionSFX);
     }
 
     public override void InputJump(bool jumpPressed, VRC.Udon.Common.UdonInputEventArgs args)
